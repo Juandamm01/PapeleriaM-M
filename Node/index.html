@@ -1,0 +1,42 @@
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuarios - Programación Web</title>
+    <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+    <h1>Talento Tech GYM</h1>
+
+    <!-- Formulario para agregar un nuevo usuario -->
+    <h2>Agregar Usuario</h2>
+    <form id="form">
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" required>
+
+        <label for="telefono">Teléfono:</label>
+        <input type="text" id="telefono" name="telefono" required>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+
+        <button type="submit">Agregar Usuario</button>
+    </form>
+
+    <!-- Tabla para mostrar los usuarios -->
+    <h2>Lista de Usuarios</h2>
+    <table id="usuarios-table">
+        <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Teléfono</th>
+            <th>Email</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script src="index.js"></script>
+    </body>
+    </html>
