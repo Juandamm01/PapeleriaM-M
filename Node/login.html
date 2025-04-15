@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Iniciar Sesión</title>
+  <link rel="stylesheet" href="../CSS/login.css" />
+  <link rel="website icon" type="jpg" href="../IMG/MYM.jpg">
+</head>
+<body>
+  <img src="../IMG/MYM.jpg" alt="Logo JDY" class="logo" />
+<H1>Papeleria M&M</H1>
+  <h1>Inicio de Sesión</h1>
+
+  <form id="login-form">
+    <label for="usuario">Usuario</label>
+    <input type="text" id="usuario" placeholder="Ingresa tu usuario" required />
+
+    <label for="contraseña">Contraseña</label>
+    <div class="input-container">
+      <input type="password" id="contraseña" placeholder="Ingresa tu contraseña" required />
+      <span class="toggle-password" id="togglePass">👁️</span>
+    </div>
+
+    <label for="confirmar">Confirmar Contraseña</label>
+    <div class="input-container">
+      <input type="password" id="confirmar" placeholder="Confirma tu contraseña" required />
+      <span class="toggle-password" id="toggleConfirm">👁️</span>
+    </div>
+
+    <button type="submit">Iniciar Sesión</button>
+    <p id="mensaje"></p>
+
+    <p>¿No tienes cuenta? <a href="registro.html">Regístrate aquí</a></p>
+  </form>
+
+  <script src="../JS/login.js"></script>
+</body>
+</html>

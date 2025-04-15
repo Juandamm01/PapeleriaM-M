@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="../CSS/productos.css">
+  <link rel="website icon" type="jpg" href="../IMG/MYM.jpg">
+  <title>Papelería M&M</title>
+</head>
+<body>
+  <h1 class="titulo">Productos Papelería M&M</h1>
+
+  <nav class="barra-nav">
+    <ul>
+      <li><a href="bienvenida.html">Inicio</a></li>
+      <li><a href="productos.html">Productos</a></li>
+      <li><a href="ofertas.html">Ofertas</a></li>
+      <li><a href="contacto.html">Contacto</a></li>
+      <li><a href="micuenta.html">Mi Cuenta</a></li>
+    </ul>
+  </nav>
+
+<div class="productos">
+    <div class="producto">
+      <img src="https://www.soyvisual.org/sites/default/files/styles/augmentative_resource_lightbox/public/images/photos/cole_0020.jpg?itok=SyOIpNSJ" alt="Lápiz" width="150">
+      <h3>Lápiz escolar</h3>
+      <p>Precio: $500</p>
+
+      <label for="cantidad-lapiz">Cantidad:</label>
+      <input type="number" id="cantidad-lapiz" name="cantidad" min="1" value="1">
+      <p>Total: <span id="total-lapiz">$500</span></p>
+
+      <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+        <input type="hidden" name="cmd" value="_xclick">
+        <input type="hidden" name="business" value="juandamm90@gmail.com">
+        <input type="hidden" name="item_name" value="Lápiz escolar">
+        <input type="hidden" name="amount" id="paypal-amount-lapiz" value="0.12">
+        <input type="hidden" name="currency_code" value="USD">
+        <input type="submit" value="Comprar" class="paypal-button">
+      </form>
+    </div>
+
+
+
+    <div class="producto">
+      <img src="https://acpapeleria.com/4777-large_default/sacapuntas-campus-metal-cunap-24.jpg" alt="Sacapuntas" width="150">
+      <h3>Sacapuntas</h3>
+      <p>Precio: $800</p>
+    
+      <label for="cantidad-sacapuntas">Cantidad:</label>
+      <input type="number" id="cantidad-sacapuntas" name="cantidad" min="1" value="1">
+      <p>Total: <span id="total-sacapuntas">800</span></p>
+    
+      <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+        <input type="hidden" name="cmd" value="_xclick">
+        <input type="hidden" name="business" value="juandamm90@gmail.com">
+        <input type="hidden" name="item_name" value="Sacapuntas">
+        <input type="hidden" name="amount" id="paypal-amount-sacapuntas" value="0.20">
+        <input type="hidden" name="currency_code" value="USD">
+        <input type="submit" value="Comprar" class="paypal-button">
+      </form>
+    </div>
+    
+
+  <div class="producto">
+    <img src="https://medios.papeleriamodelo.com/wp-content/uploads/2015/06/borrador-nata-624.jpg" alt="Borrador" width="150">
+    <h3>Borrador</h3>
+    <p>Precio: $1000</p>
+    <label for="cantidad-borrador">Cantidad:</label>
+    <input type="number" id="cantidad-borrador" name="cantidad" min="1" value="1" onchange="actualizarTotal('borrador', 1000, 0.23)">
+    <p>Total: <span id="total-borrador">$1000</span></p>
+    <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+      <input type="hidden" name="cmd" value="_xclick">
+      <input type="hidden" name="business" value="juandamm90@gmail.com"> 
+      <input type="hidden" name="item_name" value="Borrador blanco">
+      <input type="hidden" name="amount" id="paypal-amount-borrador" value="0.25">
+      <input type="hidden" name="currency_code" value="USD">
+      <input type="submit" value="Comprar" class="paypal-button">
+    </form>
+</div>
+
+
+  <div class="producto">
+    <img src="https://papelerialeonet.com/wp-content/uploads/2023/06/lapicero-kilometrico.png" alt="Lapicero" width="150">
+    <h3>Lapicero</h3>
+    <p>Precio: $2000</p>
+    <label for="cantidad-lapicero">Cantidad:</label>
+    <input type="number" id="cantidad-lapicero" name="cantidad" min="1" value="1">
+    <p>Total: <span id="total-lapicero">$1000</span></p>
+    <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+      <input type="hidden" name="cmd" value="_xclick">
+      <input type="hidden" name="business" value="juandamm90@gmail.com"> 
+      <input type="hidden" name="item_name" value="Lapicero">
+      <input type="hidden" name="amount" id="paypal-amount-lapicero" value="0.50">
+      <input type="hidden" name="currency_code" value="USD">
+      <input type="submit" value="Comprar" class="paypal-button">
+    </form>
+  </div>
+
+    <div class="producto">
+      <img src="https://tiendaroka.com/wp-content/uploads/2023/05/MICHAEL-JORDAN-001.jpg" alt="Cuaderno" width="150">
+      <h3>Cuaderno cuadriculado</h3>
+      <p>Precio: $3.000</p>
+      <label for="cantidad-cuaderno">Cantidad:</label>
+      <input type="number" id="cantidad-cuaderno" name="cantidad" min="1" value="1">
+      <p>Total: <span id="total-cuaderno">$3000</span></p>
+      <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+        <input type="hidden" name="cmd" value="_xclick">
+        <input type="hidden" name="business" value="juandamm90@gmail.com"> 
+        <input type="hidden" name="item_name" value="Cuaderno cuadriculado">
+        <input type="hidden" name="amount" value="0.70">
+        <input type="hidden" name="currency_code" value="USD">
+        <input type="submit" value="Comprar" class="paypal-button">
+      </form>
+    </div>
+
+    <div class="producto">
+      <img src="https://thumbs.dreamstime.com/b/pares-de-compases-40005718.jpg" alt="Compás metálico" width="150">
+      <h3>Compás metálico</h3>
+      <p>Precio: $4.000 COP</p>
+      <label for="cantidad-compas">Cantidad:</label>
+      <input type="number" id="cantidad-compas" name="cantidad" min="1" value="1">
+      <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+        <input type="hidden" name="cmd" value="_xclick">
+        <input type="hidden" name="business" value="juandamm90@gmail.com"> 
+        <input type="hidden" name="item_name" value="Compás metálico">
+        <input type="hidden" name="amount" value="0.93">
+        <input type="hidden" name="currency_code" value="USD">
+        <input type="submit" value="Comprar" class="paypal-button">
+      </form>
+    </div>
+
+    <div class="producto">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Squadra_45.jpg" alt="Juego de escuadras" width="150">
+      <h3>Regla</h3>
+      <p>Precio: $7.000 COP</p>
+      <label for="cantidad-regla">Cantidad:</label>
+      <input type="number" id="cantidad-regla" name="cantidad" min="1" value="1">
+      <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+        <input type="hidden" name="cmd" value="_xclick">
+        <input type="hidden" name="business" value="juandamm90@gmail.com">
+        <input type="hidden" name="item_name" value="Juego de escuadras">
+        <input type="hidden" name="amount" value="1.63">
+        <input type="hidden" name="currency_code" value="USD">
+        <input type="submit" value="Comprar" class="paypal-button">
+      </form>
+    </div>
+
+    <div class="producto">
+      <img src="https://elchiquitindelospreciosbajos.com/wp-content/uploads/2021/12/Pegante-Liquido-Payasito-120gr-Cod.-7707321284036-min-1.jpg" alt="Pegante líquido" width="150">
+      <h3>Pegante líquido</h3>
+      <p>Precio: $1.800 COP</p>
+      <label for="cantidad-pegante">Cantidad:</label>
+      <input type="number" id="cantidad-pegante" name="cantidad" min="1" value="1">
+      <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+        <input type="hidden" name="cmd" value="_xclick">
+        <input type="hidden" name="business" value="juandamm90@gmail.com"> 
+        <input type="hidden" name="item_name" value="Pegante líquido">
+        <input type="hidden" name="amount" value="1.42">
+        <input type="hidden" name="currency_code" value="USD">
+        <input type="submit" value="Comprar" class="paypal-button">
+      </form>
+    </div>
+
+    <div class="producto">
+      <img src="https://pcarrasco.com.ar/wp-content/uploads/2019/05/carpeta_3solapas.jpg" alt="Carpetas" width="150">
+      <h3>Carpetas</h3>
+      <p>Precio: $2.000</p>
+      <label for="cantidad-carpeta">Cantidad:</label>
+      <input type="number" id="cantidad-carpeta" name="cantidad" min="1" value="1">
+      <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+        <input type="hidden" name="cmd" value="_xclick">
+        <input type="hidden" name="business" value="juandamm90@gmail.com"> 
+        <input type="hidden" name="item_name" value="Carpetas">
+        <input type="hidden" name="amount" value="0.47">
+        <input type="hidden" name="currency_code" value="USD">
+        <input type="submit" value="Comprar" class="paypal-button">
+      </form>
+    </div>
+  </div>
+  <script src="../JS/productos.js"></script>
+</body>
+</html>
