@@ -104,59 +104,42 @@ app.get("/preguntas/:id_usuario", (req, res) => {
   });
 });
 
-// Ruta para guardar respuestas
-app.post("/guardar-respuesta", (req, res) => {
-  const { id_usuario, id_pregunta, texto_respuesta } = req.body;
 
-  if (!id_usuario || !id_pregunta || !texto_respuesta) {
-    return res.status(400).json({ mensaje: "Faltan datos" });
-  }
+// Ruta para obtener las reseñas de un usuario específico
+app.get("/reseñas/:id_usuario", (req, res) => {
+  const id_usuario = req.params.id_usuario;  // El id_usuario se obtiene dinámicamente de la URL
+  const query = "SELECT * FROM reseñas WHERE id_usuario = ?";
 
-  const query = "INSERT INTO respuestas (id_usuario, id_pregunta, texto_respuesta) VALUES (?, ?, ?)";
-  connexion.query(query, [id_usuario, id_pregunta, texto_respuesta], (err, resultado) => {
+  connexion.query(query, [id_usuario], (err, resultado) => {
     if (err) {
-      console.error("Error al guardar la respuesta:", err);
-      return res.status(500).json({ mensaje: "Error al guardar la respuesta" });
-    }
-
-    res.status(200).json({ mensaje: "Respuesta guardada con éxito" });
-  });
-});
-
-// Ruta para obtener todas las respuestas de una pregunta
-app.get("/respuestas/:id_pregunta", (req, res) => {
-  const id_pregunta = req.params.id_pregunta;
-  const query = "SELECT * FROM respuestas WHERE id_pregunta = ?";
-
-  connexion.query(query, [id_pregunta], (err, resultado) => {
-    if (err) {
-      console.error("Error al obtener respuestas:", err);
+      console.error("Error al obtener las reseñas:", err);
       return res.status(500).json({ error: "Error en el servidor" });
     }
 
     if (resultado.length > 0) {
-      res.json(resultado);
+      res.json(resultado);  // Devolvemos las reseñas de ese usuario
     } else {
-      res.status(404).json({ error: "No se encontraron respuestas para esta pregunta" });
+      res.status(404).json({ error: "No se encontraron reseñas para este usuario" });
     }
   });
 });
 
-// Ruta para eliminar una respuesta
-app.delete("/borrar-respuesta/:id_respuesta", (req, res) => {
-  const { id_respuesta } = req.params;
-  const query = "DELETE FROM respuestas WHERE id_respuesta = ?";
-  connexion.query(query, [id_respuesta], (err, resultado) => {
+// Ruta para guardar una nueva reseña
+app.post("/guardar-resena", (req, res) => {
+  const { id_usuario, reseña } = req.body;  // El id_usuario se recibe en el cuerpo de la solicitud
+
+  if (!id_usuario || !reseña) {
+    return res.status(400).json({ mensaje: "Faltan datos" });
+  }
+
+  const query = "INSERT INTO reseñas (id_usuario, texto_respuesta) VALUES (?, ?)";
+  connexion.query(query, [id_usuario, reseña], (err, resultado) => {
     if (err) {
-      console.error("Error al borrar la respuesta:", err);
-      return res.status(500).json({ mensaje: "Error al borrar la respuesta" });
+      console.error("Error al guardar la reseña:", err);
+      return res.status(500).json({ mensaje: "Error al guardar la reseña" });
     }
 
-    if (resultado.affectedRows === 0) {
-      return res.status(404).json({ mensaje: "Respuesta no encontrada" });
-    }
-
-    res.status(200).json({ mensaje: "Respuesta eliminada con éxito" });
+    res.status(200).json({ mensaje: "Reseña guardada con éxito" });
   });
 });
 

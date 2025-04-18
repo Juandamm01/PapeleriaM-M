@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="../CSS/productos.css">
+  <link rel="website icon" type="jpg" href="../IMG/MYM.jpg">
+  <title>Ofertas - Papelería M&M</title>
+</head>
+<body>
+  <h1 class="titulo">Ofertas Especiales Papelería M&M</h1>
+
+  <nav class="barra-nav">
+    <ul>
+      <li><a href="bienvenida.html">Inicio</a></li>
+      <li><a href="productos.html">Productos</a></li>
+      <li><a href="ofertas.html">Ofertas</a></li>
+      <li><a href="contacto.html">Contacto</a></li>
+      <li><a href="micuenta.html">Mi Cuenta</a></li>
+    </ul>
+  </nav>
+
+  <div class="productos">
+    <!-- PROMO 1 -->
+    <div class="producto">
+      <img src="../IMG/cocacolas.webp" alt="Coca-Cola Personal" width="150">
+      <h3>Promo: Coca-Cola Personal x2</h3>
+      <p>¡Llévate 2 por solo $6.500!</p>
+      <button onclick="agregarAlCarrito('Promo Coca-Cola x2', 6500)">Agregar al carrito</button>
+      <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+        <input type="hidden" name="cmd" value="_xclick">
+        <input type="hidden" name="business" value="juandamm90@gmail.com">
+        <input type="hidden" name="item_name" value="Promo Coca-Cola x2">
+        <input type="hidden" name="amount" value="1.55">
+        <input type="hidden" name="currency_code" value="USD">
+        <input type="submit" value="Comprar" class="paypal-button">
+      </form>
+    </div>
+
+    <!-- PROMO 2 -->
+    <div class="producto">
+      <img src="../IMG/impresiones.jpg" alt="Impresión B/N" width="150">
+      <h3>10 Impresiones Blanco y Negro</h3>
+      <p>$1.500</p>
+      <button onclick="agregarAlCarrito('10 Impresiones Blanco y Negro', 1500)">Agregar al carrito</button>
+      <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+        <input type="hidden" name="cmd" value="_xclick">
+        <input type="hidden" name="business" value="juandamm90@gmail.com">
+        <input type="hidden" name="item_name" value="10 impresiones B/N">
+        <input type="hidden" name="amount" value="0.35">
+        <input type="hidden" name="currency_code" value="USD">
+        <input type="submit" value="Comprar" class="paypal-button">
+      </form>
+    </div>
+
+    <!-- PROMO 3 -->
+    <div class="producto">
+      <img src="../IMG/lapiz borrador regla.webp" alt="Combo escolar" width="150">
+      <h3>Combo Escolar Básico</h3>
+      <p>Lápiz, borrador y regla a $2.000</p>
+      <button onclick="agregarAlCarrito('Combo Escolar Básico', 2000)">Agregar al carrito</button>
+      <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+        <input type="hidden" name="cmd" value="_xclick">
+        <input type="hidden" name="business" value="juandamm90@gmail.com">
+        <input type="hidden" name="item_name" value="Combo Escolar Básico">
+        <input type="hidden" name="amount" value="0.47">
+        <input type="hidden" name="currency_code" value="USD">
+        <input type="submit" value="Comprar" class="paypal-button">
+      </form>
+    </div>
+
+    <!-- PROMO 4 -->
+    <div class="producto">
+      <img src="../IMG/colores.jpeg" alt="Promo colores" width="150">
+      <h3>Colores x6 unidades</h3>
+      <p>$2.500</p>
+      <button onclick="agregarAlCarrito('Colores x6 unidades', 2500)">Agregar al carrito</button>
+      <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+        <input type="hidden" name="cmd" value="_xclick">
+        <input type="hidden" name="business" value="juandamm90@gmail.com">
+        <input type="hidden" name="item_name" value="Colores x6">
+        <input type="hidden" name="amount" value="0.59">
+        <input type="hidden" name="currency_code" value="USD">
+        <input type="submit" value="Comprar" class="paypal-button">
+      </form>
+    </div>
+
+    <!-- NUEVA PROMO 5 -->
+    <div class="producto">
+      <img src="../IMG/cuaderno.webp" alt="Cuadernos promo" width="150">
+      <h3>Cuadernos Rayados x3</h3>
+      <p>Solo $6.000</p>
+      <button onclick="agregarAlCarrito('Cuadernos Rayados x3', 6000)">Agregar al carrito</button>
+      <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+        <input type="hidden" name="cmd" value="_xclick">
+        <input type="hidden" name="business" value="juandamm90@gmail.com">
+        <input type="hidden" name="item_name" value="Cuadernos Rayados x3">
+        <input type="hidden" name="amount" value="1.43">
+        <input type="hidden" name="currency_code" value="USD">
+        <input type="submit" value="Comprar" class="paypal-button">
+      </form>
+    </div>
+
+    <!-- NUEVA PROMO 6 -->
+    <div class="producto">
+        <img src="../IMG/Impresion-color.webp" alt="Impresión a color" width="150">
+        <h3>5 impresiones a color</h3>
+        <p>$3.500</p>
+        <button onclick="agregarAlCarrito('5 impresiones a color', 3500)">Agregar al carrito</button>
+        <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+          <input type="hidden" name="cmd" value="_xclick">
+          <input type="hidden" name="business" value="juandamm90@gmail.com">
+          <input type="hidden" name="item_name" value="5 impresiones a color">
+          <input type="hidden" name="amount" value="0.83">
+          <input type="hidden" name="currency_code" value="USD">
+          <input type="submit" value="Comprar" class="paypal-button">
+        </form>
+      </div>
+      
+    <!-- NUEVA PROMO 7 -->
+    <div class="producto">
+        <img src="../IMG/escanear.jpg" alt="Digitalización" width="150">
+        <h3>Impresión + escaneo de documento</h3>
+        <p>$4.500</p>
+        <button onclick="agregarAlCarrito('Impresión + escaneo de documento', 4500)">Agregar al carrito</button>
+        <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+          <input type="hidden" name="cmd" value="_xclick">
+          <input type="hidden" name="business" value="juandamm90@gmail.com">
+          <input type="hidden" name="item_name" value="Impresión y escaneo">
+          <input type="hidden" name="amount" value="1.07">
+          <input type="hidden" name="currency_code" value="USD">
+          <input type="submit" value="Comprar" class="paypal-button">
+        </form>
+      </div>
+
+    <!-- NUEVA PROMO 8 -->
+    <div class="producto">
+      <img src="../IMG/marcadores.jpeg" alt="Marcadores colores" width="150">
+      <h3>Marcadores colores x5</h3>
+      <p>¡Solo $3.500!</p>
+      <button onclick="agregarAlCarrito('Marcadores colores x5', 3500)">Agregar al carrito</button>
+      <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+        <input type="hidden" name="cmd" value="_xclick">
+        <input type="hidden" name="business" value="juandamm90@gmail.com">
+        <input type="hidden" name="item_name" value="Marcadores x5">
+        <input type="hidden" name="amount" value="0.83">
+        <input type="hidden" name="currency_code" value="USD">
+        <input type="submit" value="Comprar" class="paypal-button">
+      </form>
+    </div>
+
+  </div>
+
+  <!-- Carrito de Compras -->
+<div id="carrito" class="carrito">
+    <h2>🛒 Carrito de Compras</h2>
+    <ul id="lista-carrito"></ul>
+    <p id="total">Total: $0 COP</p>
+    <button onclick="vaciarCarrito()">Vaciar Carrito</button>
+    <!-- Botón de pago solo aparece si hay productos en el carrito -->
+    <button id="boton-pagar" onclick="pagarCarrito()" style="display:none;">Pagar</button>
+  </div>
+  
+
+  <script src="../JS/ofertas.js"></script>
+</body>
+</html>
