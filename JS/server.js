@@ -5,6 +5,8 @@ const { connexion } = require('./database.js');
 const app = express();
 const puerto = 3000;
 
+// Servir archivos estáticos desde la carpeta 'html'
+app.use(express.static('HTML'));
 app.use(cors());
 app.use(express.json());
 
