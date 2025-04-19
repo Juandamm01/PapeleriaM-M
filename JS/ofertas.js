@@ -3,11 +3,6 @@ let carrito = [];
     const totalElemento = document.getElementById("total");
     const botonPagar = document.getElementById("boton-pagar");
 
-    function agregarAlCarrito(nombre, precio) {
-      carrito.push({ nombre, precio });
-      actualizarCarrito();
-    }
-
     function actualizarCarrito() {
       listaCarrito.innerHTML = "";
       let total = 0;

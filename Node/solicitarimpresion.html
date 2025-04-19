@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../CSS/solicitarimpresion.css">
+  <link rel="website icon" type="jpg" href="../IMG/MYM.jpg">
+  <title>Solicitar Impresión | Papelería M&M</title>
+</head>
+<body>
+
+  <!-- Logo -->
+  <img src="../IMG/MYM.jpg" alt="Logo Papelería M&M" class="logo">
+
+  <!-- Encabezado -->
+  <header>
+    <h1>Papelería M&M</h1>
+    <nav>
+      <ul>
+        <li><a href="bienvenida.html">Inicio</a></li>
+        <li><a href="productos.html">Productos</a></li>
+        <li><a href="ofertas.html">Ofertas</a></li>
+        <li><a href="contacto.html">Contacto</a></li>
+        <li><a href="micuenta.html">Mi Cuenta</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Contenido principal: Formulario para solicitar impresión -->
+  <section>
+    <h2>Solicitar Impresión</h2>
+    <form id="formulario-impresion">
+      <label for="tipo">Tipo de Impresión:</label>
+      <select id="tipo" name="tipo" required>
+        <option value="blanco_negro">Blanco y Negro</option>
+        <option value="color">A Color</option>
+      </select>
+
+      <label for="cantidad">Cantidad de Hojas:</label>
+      <input type="number" id="cantidad" name="cantidad" required min="1" onchange="calcularPrecio()">
+
+      <label for="precio">Precio Total (en $):</label>
+      <input type="text" id="precio" name="precio" disabled>
+
+      <label for="documento">Seleccionar Documento (si aplica):</label>
+      <input type="file" id="documento" name="documento">
+
+      <button type="submit" id="submit">Solicitar Impresión</button>
+    </form>
+  </section>
+
+  <!-- Pie de página -->
+  <footer>
+    <p><a href="politica.html">Política de privacidad</a> | <a href="terminos.html">Términos y condiciones</a></p>
+  </footer>
+
+  <script src="../JS/solicitarimpresion.js"></script>
+
+</body>
+</html>

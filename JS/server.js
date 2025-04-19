@@ -143,6 +143,32 @@ app.post("/guardar-resena", (req, res) => {
   });
 });
 
+
+// Ruta para registrar impresiones
+app.post("/registrar-impresion", (req, res) => {
+  const { id_usuario, tipo_impresion, cantidad, precio } = req.body;
+
+  // Validación básica de los datos
+  if (!id_usuario || !tipo_impresion || !cantidad || !precio) {
+    return res.status(400).json({ mensaje: "Faltan datos" });
+  }
+
+  // Llamar al procedimiento almacenado para registrar la impresión
+  const query = "CALL registrar_impresion(?, ?, ?, ?)";
+
+  connexion.query(query, [id_usuario, tipo_impresion, cantidad, precio], (err, resultado) => {
+    if (err) {
+      console.error("Error al registrar impresión:", err);
+      return res.status(500).json({ mensaje: "Error al registrar impresión" });
+    }
+
+    // Enviar mensaje de éxito
+    res.status(200).json({ mensaje: "Impresión registrada con éxito" });
+  });
+});
+
+
+
 app.listen(puerto, () => {
   console.log(`Servidor escuchando en http://localhost:${puerto}`);
 });
