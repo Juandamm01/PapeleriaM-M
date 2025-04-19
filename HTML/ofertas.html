@@ -25,7 +25,6 @@
       <img src="../IMG/cocacolas.webp" alt="Coca-Cola Personal" width="150">
       <h3>Promo: Coca-Cola Personal x2</h3>
       <p>¡Llévate 2 por solo $6.500!</p>
-      <button onclick="agregarAlCarrito('Promo Coca-Cola x2', 6500)">Agregar al carrito</button>
       <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
         <input type="hidden" name="cmd" value="_xclick">
         <input type="hidden" name="business" value="juandamm90@gmail.com">
@@ -41,7 +40,6 @@
       <img src="../IMG/impresiones.jpg" alt="Impresión B/N" width="150">
       <h3>10 Impresiones Blanco y Negro</h3>
       <p>$1.500</p>
-      <button onclick="agregarAlCarrito('10 Impresiones Blanco y Negro', 1500)">Agregar al carrito</button>
       <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
         <input type="hidden" name="cmd" value="_xclick">
         <input type="hidden" name="business" value="juandamm90@gmail.com">
@@ -57,7 +55,6 @@
       <img src="../IMG/lapiz borrador regla.webp" alt="Combo escolar" width="150">
       <h3>Combo Escolar Básico</h3>
       <p>Lápiz, borrador y regla a $2.000</p>
-      <button onclick="agregarAlCarrito('Combo Escolar Básico', 2000)">Agregar al carrito</button>
       <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
         <input type="hidden" name="cmd" value="_xclick">
         <input type="hidden" name="business" value="juandamm90@gmail.com">
@@ -73,7 +70,6 @@
       <img src="../IMG/colores.jpeg" alt="Promo colores" width="150">
       <h3>Colores x6 unidades</h3>
       <p>$2.500</p>
-      <button onclick="agregarAlCarrito('Colores x6 unidades', 2500)">Agregar al carrito</button>
       <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
         <input type="hidden" name="cmd" value="_xclick">
         <input type="hidden" name="business" value="juandamm90@gmail.com">
@@ -89,7 +85,6 @@
       <img src="../IMG/cuaderno.webp" alt="Cuadernos promo" width="150">
       <h3>Cuadernos Rayados x3</h3>
       <p>Solo $6.000</p>
-      <button onclick="agregarAlCarrito('Cuadernos Rayados x3', 6000)">Agregar al carrito</button>
       <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
         <input type="hidden" name="cmd" value="_xclick">
         <input type="hidden" name="business" value="juandamm90@gmail.com">
@@ -105,7 +100,6 @@
         <img src="../IMG/Impresion-color.webp" alt="Impresión a color" width="150">
         <h3>5 impresiones a color</h3>
         <p>$3.500</p>
-        <button onclick="agregarAlCarrito('5 impresiones a color', 3500)">Agregar al carrito</button>
         <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
           <input type="hidden" name="cmd" value="_xclick">
           <input type="hidden" name="business" value="juandamm90@gmail.com">
@@ -121,7 +115,6 @@
         <img src="../IMG/escanear.jpg" alt="Digitalización" width="150">
         <h3>Impresión + escaneo de documento</h3>
         <p>$4.500</p>
-        <button onclick="agregarAlCarrito('Impresión + escaneo de documento', 4500)">Agregar al carrito</button>
         <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
           <input type="hidden" name="cmd" value="_xclick">
           <input type="hidden" name="business" value="juandamm90@gmail.com">
@@ -137,7 +130,6 @@
       <img src="../IMG/marcadores.jpeg" alt="Marcadores colores" width="150">
       <h3>Marcadores colores x5</h3>
       <p>¡Solo $3.500!</p>
-      <button onclick="agregarAlCarrito('Marcadores colores x5', 3500)">Agregar al carrito</button>
       <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
         <input type="hidden" name="cmd" value="_xclick">
         <input type="hidden" name="business" value="juandamm90@gmail.com">
@@ -149,17 +141,6 @@
     </div>
 
   </div>
-
-  <!-- Carrito de Compras -->
-<div id="carrito" class="carrito">
-    <h2>🛒 Carrito de Compras</h2>
-    <ul id="lista-carrito"></ul>
-    <p id="total">Total: $0 COP</p>
-    <button onclick="vaciarCarrito()">Vaciar Carrito</button>
-    <!-- Botón de pago solo aparece si hay productos en el carrito -->
-    <button id="boton-pagar" onclick="pagarCarrito()" style="display:none;">Pagar</button>
-  </div>
-  
 
   <script src="../JS/ofertas.js"></script>
 </body>

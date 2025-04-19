@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Cuenta - TalentoTech Gym</title>
+  <link rel="stylesheet" href="../CSS/micuenta.css">
+  <link rel="website icon" type="jpg" href="../IMG/MYM.jpg">
+</head>
+<body>
+  <header>
+    <h1>Datos personales Papeleria M&M</h1>
+    <div class="logo-container">
+      <img src="../IMG/MYM.jpg" alt="TalentoTech Gym" class="logo">
+    </div>
+    <nav>
+      <ul>
+        <li><a href="bienvenida.html">Inicio</a></li>
+        <li><a href="productos.html">Productos</a></li>
+        <li><a href="ofertas.html">Ofertas</a></li>
+        <li><a href="contacto.html">Contacto</a></li>
+        <li><a href="micuenta.html">Mi Cuenta</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section>
+      <h2>Mi Información</h2>
+      <div>
+        <p><strong>Nombre:</strong> <span id="nombre"></span></p>
+        <p><strong>Usuario:</strong> <span id="usuario"></span></p>
+        <p><strong>Teléfono:</strong> <span id="telefono"></span></p>
+        <p><strong>Email:</strong> <span id="email"></span></p>
+        <p><strong>Contraseña:</strong> <span id="contrasena"></span></p>
+      </div>
+    </section>
+
+    <div>
+      <h3>Foto de perfil</h3>
+      <img id="imagenPerfil" src="../IMG/SinFotoDePerfil.webp" alt="Foto de perfil" width="150" style="border-radius: 50%; margin: 10px 0; display: block;">
+      <input type="file" id="fotoPerfil" accept="image/*">
+    </div>
+  </section>
+
+    <section>
+      <button id="logoutButton">Cerrar sesión</button>
+    </section>
+  </main>
+
+  <div class="boton-derecha">
+    <button id="eliminarBtn">Eliminar Cuenta</button>
+  </div>
+  
+  
+
+  
+  <script src="../JS/micuenta.js"></script> 
+
+</body>
+</html>

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 use usuariosprogramacionweb;	
 
 CREATE TABLE preguntas (
@@ -55,6 +56,4 @@ select * from preguntas;
 select * from reseñas;
 
 show tables;
-
-
 

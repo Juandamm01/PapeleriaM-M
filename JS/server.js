@@ -5,6 +5,8 @@ const { connexion } = require('./database.js');
 const app = express();
 const puerto = 3000;
 
+// Servir archivos estáticos desde la carpeta 'html'
+app.use(express.static('HTML'));
 app.use(cors());
 app.use(express.json());
 
@@ -142,6 +144,48 @@ app.post("/guardar-resena", (req, res) => {
     res.status(200).json({ mensaje: "Reseña guardada con éxito" });
   });
 });
+
+
+// Ruta para registrar impresiones
+app.post("/registrar-impresion", (req, res) => {
+  const { id_usuario, tipo_impresion, cantidad, precio } = req.body;
+
+  // Validación básica de los datos
+  if (!id_usuario || !tipo_impresion || !cantidad || !precio) {
+    return res.status(400).json({ mensaje: "Faltan datos" });
+  }
+
+  // Llamar al procedimiento almacenado para registrar la impresión
+  const query = "CALL registrar_impresion(?, ?, ?, ?)";
+
+  connexion.query(query, [id_usuario, tipo_impresion, cantidad, precio], (err, resultado) => {
+    if (err) {
+      console.error("Error al registrar impresión:", err);
+      return res.status(500).json({ mensaje: "Error al registrar impresión" });
+    }
+
+    // Enviar mensaje de éxito
+    res.status(200).json({ mensaje: "Impresión registrada con éxito" });
+  });
+});
+
+// Ruta para eliminar una cuenta
+app.delete('/api/eliminar-cuenta/:id_usuario', (req, res) => {
+  const id_usuario = req.params.id_usuario;
+
+  const sql = 'DELETE FROM usuarios WHERE id_usuario = ?';
+
+  connexion.query(sql, [id_usuario], (err, resultado) => {
+      if (err) {
+          console.error("Error al eliminar cuenta:", err);
+          res.status(500).send("Error al eliminar la cuenta");
+      } else {
+          res.send("Cuenta eliminada con éxito");
+      }
+  });
+});
+
+
 
 app.listen(puerto, () => {
   console.log(`Servidor escuchando en http://localhost:${puerto}`);

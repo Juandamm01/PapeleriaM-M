@@ -11,10 +11,10 @@ document.addEventListener("DOMContentLoaded", function () {
     function toggleVisibility(input, icon) {
         if (input.type === "password") {
         input.type = "text";
-          icon.textContent = "❌"; // Cambia a X cuando está visible
+        icon.textContent = "❌"; 
         } else {
         input.type = "password";
-          icon.textContent = "👁️"; // Cambia a ojito cuando está oculto
+        icon.textContent = "👁️";
         }
     }
 
