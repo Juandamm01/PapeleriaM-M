@@ -36,7 +36,7 @@ CREATE PROCEDURE registrar_impresion(
     IN p_precio DECIMAL(10,2)   
 )
 BEGIN
-    -- Registrar la nueva impresión con el estado 'pendiente'
+    
     INSERT INTO impresiones (id_usuario, tipo_impresion, cantidad, precio, estado)
     VALUES (p_id_usuario, p_tipo_impresion, p_cantidad, p_precio, 'pendiente'); 
 
