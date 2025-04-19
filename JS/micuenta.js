@@ -6,10 +6,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const contrasenaElemento = document.getElementById('contrasena');
     const imagenPerfil = document.getElementById('imagenPerfil');
     const inputFotoPerfil = document.getElementById('fotoPerfil');
+    const logoutButton = document.getElementById('logoutButton');
+    const eliminarBtn = document.getElementById("eliminarBtn");
 
-    //Obtenemos el ID del usuario desde localStorage
     const id_usuario = localStorage.getItem("id_usuario");
-
 
     if (!id_usuario) {
         alert("No se encontró información del usuario. Por favor, inicia sesión.");
@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
+    // Mostrar datos del usuario
     fetch(`http://localhost:3000/api/micuenta/${id_usuario}`)
         .then(response => response.json())
         .then(data => {
@@ -39,24 +40,41 @@ document.addEventListener("DOMContentLoaded", function () {
             alert('Hubo un problema al obtener los datos');
         });
 
-    const logoutButton = document.getElementById('logoutButton');
-    if (logoutButton) {
-        logoutButton.addEventListener('click', function () {
-            localStorage.removeItem("id_usuario");
-            window.location.href = "login.html";
-        });
-    }
+    // Cerrar sesión
+    logoutButton.addEventListener('click', function () {
+        localStorage.removeItem("id_usuario");
+        window.location.href = "login.html";
+    });
 
-    if (inputFotoPerfil) {
-        inputFotoPerfil.addEventListener('change', function (event) {
-            const archivo = event.target.files[0];
-            if (archivo) {
-                const lector = new FileReader();
-                lector.onload = function (e) {
-                    imagenPerfil.src = e.target.result;
-                };
-                lector.readAsDataURL(archivo);
-            }
-        });
-    }
+    // Mostrar imagen de perfil al subir
+    inputFotoPerfil.addEventListener('change', function (event) {
+        const archivo = event.target.files[0];
+        if (archivo) {
+            const lector = new FileReader();
+            lector.onload = function (e) {
+                imagenPerfil.src = e.target.result;
+            };
+            lector.readAsDataURL(archivo);
+        }
+    });
+
+    // Eliminar cuenta
+    eliminarBtn.addEventListener("click", () => {
+        const confirmacion = confirm("¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.");
+        if (confirmacion) {
+            fetch(`http://localhost:3000/api/eliminar-cuenta/${id_usuario}`, {
+                method: "DELETE",
+            })
+                .then(res => res.text())
+                .then(msg => {
+                    alert(msg);
+                    localStorage.removeItem("id_usuario");
+                    window.location.href = "login.html";
+                })
+                .catch(err => {
+                    console.error("Error al eliminar la cuenta:", err);
+                    alert("Hubo un error al eliminar tu cuenta");
+                });
+        }
+    });
 });

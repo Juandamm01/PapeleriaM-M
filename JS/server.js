@@ -169,6 +169,22 @@ app.post("/registrar-impresion", (req, res) => {
   });
 });
 
+// Ruta para eliminar una cuenta
+app.delete('/api/eliminar-cuenta/:id_usuario', (req, res) => {
+  const id_usuario = req.params.id_usuario;
+
+  const sql = 'DELETE FROM usuarios WHERE id_usuario = ?';
+
+  connexion.query(sql, [id_usuario], (err, resultado) => {
+      if (err) {
+          console.error("Error al eliminar cuenta:", err);
+          res.status(500).send("Error al eliminar la cuenta");
+      } else {
+          res.send("Cuenta eliminada con éxito");
+      }
+  });
+});
+
 
 
 app.listen(puerto, () => {
