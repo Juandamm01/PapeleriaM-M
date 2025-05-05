@@ -1,9 +1,11 @@
 const express = require("express");
 const cors = require("cors");
 const { connexion } = require('./database.js');
+const bcrypt = require("bcryptjs");
 
 const app = express();
 const puerto = 3000;
+
 
 // Servir archivos estáticos desde la carpeta 'html'
 app.use(express.static('HTML'));
@@ -29,44 +31,63 @@ app.get("/api/micuenta/:id", (req, res) => {
   });
 });
 
-// Ruta para registrar usuarios
-app.post("/usuarios", (req, res) => {
+
+
+app.post("/usuarios", async (req, res) => {
   const { nombre, telefono, email, usuario, contraseña } = req.body;
 
-  const query = "INSERT INTO usuarios (nombre, telefono, email, usuario, contraseña) VALUES (?, ?, ?, ?, ?)";
-  connexion.query(query, [nombre, telefono, email, usuario, contraseña], (err, resultado) => {
-    if (err) {
-      console.error("Error al insertar usuario:", err);
-      return res.status(500).send("Error al registrar usuario");
-    }
-    res.send("Usuario registrado exitosamente");
-  });
+  try {
+    // Generar hash
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(contraseña, salt);
+
+    // Guardar en la base de datos la contraseña hasheada
+    const query = "INSERT INTO usuarios (nombre, telefono, email, usuario, contraseña) VALUES (?, ?, ?, ?, ?)";
+    connexion.query(query, [nombre, telefono, email, usuario, hash], (err, resultado) => {
+      if (err) {
+        console.error("Error al insertar usuario:", err);
+        return res.status(500).send("Error al registrar usuario");
+      }
+      res.send("Usuario registrado exitosamente");
+    });
+  } catch (err) {
+    console.error("Error al hashear la contraseña:", err);
+    res.status(500).send("Error al procesar la contraseña");
+  }
 });
+
 
 // Ruta para iniciar sesión
 app.post("/login", (req, res) => {
   const { usuario, contraseña } = req.body;
 
-  const query = "SELECT * FROM usuarios WHERE usuario = ? AND contraseña = ?";
-  connexion.query(query, [usuario, contraseña], (err, resultado) => {
+  const query = "SELECT * FROM usuarios WHERE usuario = ?";
+  connexion.query(query, [usuario], async (err, resultado) => {
     if (err) {
       console.error("Error en el servidor:", err);
       return res.status(500).json({ ok: false, mensaje: "Error en servidor" });
     }
 
     if (resultado.length > 0) {
-      console.log("Inicio de sesión exitoso:", resultado[0]);
-      res.json({
-        ok: true,
-        mensaje: "Inicio de sesión exitoso",
-        id_usuario: resultado[0].id_usuario,
-      });
+      const usuarioEncontrado = resultado[0];
+
+      const coincide = await bcrypt.compare(contraseña, usuarioEncontrado.contraseña);
+      if (coincide) {
+        console.log("Inicio de sesión exitoso:", usuarioEncontrado);
+        res.json({
+          ok: true,
+          mensaje: "Inicio de sesión exitoso",
+          id_usuario: usuarioEncontrado.id_usuario,
+        });
+      } else {
+        res.json({ ok: false, mensaje: "Contraseña incorrecta" });
+      }
     } else {
-      console.log("Usuario o contraseña incorrectos");
-      res.json({ ok: false, mensaje: "Usuario o contraseña incorrectos" });
+      res.json({ ok: false, mensaje: "Usuario no encontrado" });
     }
   });
 });
+
 
 // Ruta para guardar preguntas
 app.post("/guardar-pregunta", (req, res) => {
@@ -119,7 +140,7 @@ app.get("/reseñas/:id_usuario", (req, res) => {
     }
 
     if (resultado.length > 0) {
-      res.json(resultado);  // Devolvemos las reseñas de ese usuario
+      res.json(resultado);  
     } else {
       res.status(404).json({ error: "No se encontraron reseñas para este usuario" });
     }
