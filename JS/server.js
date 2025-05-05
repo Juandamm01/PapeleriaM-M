@@ -109,7 +109,7 @@ app.get("/preguntas/:id_usuario", (req, res) => {
 
 // Ruta para obtener las reseñas de un usuario específico
 app.get("/reseñas/:id_usuario", (req, res) => {
-  const id_usuario = req.params.id_usuario;  // El id_usuario se obtiene dinámicamente de la URL
+  const id_usuario = req.params.id_usuario;  
   const query = "SELECT * FROM reseñas WHERE id_usuario = ?";
 
   connexion.query(query, [id_usuario], (err, resultado) => {
@@ -181,6 +181,35 @@ app.delete('/api/eliminar-cuenta/:id_usuario', (req, res) => {
           res.status(500).send("Error al eliminar la cuenta");
       } else {
           res.send("Cuenta eliminada con éxito");
+      }
+  });
+});
+
+
+app.put("/api/actualizar/:id", (req, res) => {
+  const id = req.params.id;
+  const { nombre, telefono, email, usuario, contraseña } = req.body;
+
+  if (!nombre || !telefono || !email || !usuario || !contraseña) {
+      return res.status(400).json({ mensaje: "Faltan datos para actualizar" });
+  }
+
+  const query = `
+      UPDATE usuarios 
+      SET nombre = ?, telefono = ?, email = ?, usuario = ?, contraseña = ?
+      WHERE id_usuario = ?
+  `;
+
+  connexion.query(query, [nombre, telefono, email, usuario, contraseña, id], (err, resultado) => {
+      if (err) {
+          console.error("Error al actualizar los datos del usuario:", err);
+          return res.status(500).json({ mensaje: "Error al actualizar los datos del usuario" });
+      }
+
+      if (resultado.affectedRows > 0) {
+          res.json({ mensaje: "Datos del usuario actualizados con éxito" });
+      } else {
+          res.status(404).json({ mensaje: "Usuario no encontrado" });
       }
   });
 });

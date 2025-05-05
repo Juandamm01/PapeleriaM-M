@@ -20,7 +20,7 @@ document.getElementById('form').addEventListener('submit', function (e) {
         document.getElementById('form').reset();
         document.getElementById('mensaje').textContent = "¡Usuario registrado con éxito!";
         setTimeout(() => {
-            window.location.href = 'login.html'; // Redirige al login
+            window.location.href = 'login.html'; 
         }, 1500);   
     })
     .catch(error => {

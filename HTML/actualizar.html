@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Actualizar Información - TalentoTech Gym</title>
+  <link rel="stylesheet" href="../CSS/micuenta.css">
+  <link rel="website icon" type="jpg" href="../IMG/MYM.jpg">
+</head>
+<body>
+  <header>
+    <h1>Actualizar Datos personales Papelería M&M</h1>
+    <div class="logo-container">
+      <img src="../IMG/MYM.jpg" alt="TalentoTech Gym" class="logo">
+    </div>
+    <nav>
+      <ul>
+        <li><a href="bienvenida.html">Inicio</a></li>
+        <li><a href="productos.html">Productos</a></li>
+        <li><a href="ofertas.html">Ofertas</a></li>
+        <li><a href="contacto.html">Contacto</a></li>
+        <li><a href="micuenta.html">Mi Cuenta</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section>
+      <h2>Actualizar Información</h2>
+      <form id="formActualizar">
+        <label for="nombreInput">Nombre:</label>
+        <input type="text" id="nombreInput" name="nombre" value="" required><br><br>
+
+        <label for="usuarioInput">Usuario:</label>
+        <input type="text" id="usuarioInput" name="usuario" value="" required><br><br>
+
+        <label for="telefonoInput">Teléfono:</label>
+        <input type="text" id="telefonoInput" name="telefono" value="" required><br><br>
+
+        <label for="emailInput">Email:</label>
+        <input type="email" id="emailInput" name="email" value="" required><br><br>
+
+        <label for="contrasenaInput">Contraseña:</label>
+        <input type="password" id="contrasenaInput" name="contrasena" required><br><br>
+
+        <button type="submit" id="btn-actualizar">Actualizar</button>
+      </form>
+    </section>
+  </main>
+
+  <script src="../JS/actualizar.js"></script>
+</body>
+</html>
