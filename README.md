@@ -21,10 +21,13 @@ Aquí puedes ver todo lo que ofrecemos a nuestra comunidad. Desde digitalizacion
 ## 🚀 Tecnologías Utilizadas
 
 Este proyecto está construido con:
-* **React 19**
-* **Vite**
-* **TypeScript**
-* **Bun** (como gestor de paquetes y entorno)
+
+<div align="left">
+  <img src="https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB" alt="React" />
+  <img src="https://img.shields.io/badge/vite-%23646CFF.svg?style=for-the-badge&logo=vite&logoColor=white" alt="Vite" />
+  <img src="https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Bun-%23000000.svg?style=for-the-badge&logo=bun&logoColor=white" alt="Bun" />
+</div>
 
 ### ¿Por qué Vite + React puro?
 Se decidió utilizar **React y Vite** (en lugar de frameworks más pesados como Next.js) porque **es un proyecto pequeño** y esta combinación nos otorga la **máxima flexibilidad** y rapidez. No necesitábamos la complejidad del Server-Side Rendering para una landing page de este tipo; buscábamos un desarrollo ágil, componentes limpios y un empaquetado ultra rápido.
