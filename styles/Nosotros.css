@@ -1,0 +1,247 @@
+.nosotros-section {
+  padding: 60px 5% 40px; /* Even less padding */
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.nosotros-container {
+  max-width: 1200px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 0.7fr 1.3fr;
+  gap: 30px; /* Reduced gap */
+  align-items: center; /* Back to center for "debe verse d1" */
+}
+
+.nosotros-image-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 15px; /* Increase gap slightly so badge isn't squished */
+}
+
+.image-wrapper-pro {
+  position: relative;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  border-radius: 30px;
+  padding: 0.8rem; /* Tight padding */
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+  max-width: 260px; /* Slightly smaller to fit D1 */
+  width: 100%;
+}
+
+.nosotros-image-pro {
+  width: 100%;
+  height: auto;
+  border-radius: 20px;
+}
+
+.image-badge-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: white;
+  padding: 8px 16px;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.03);
+  border: 1px solid rgba(255, 0, 127, 0.08);
+}
+
+.badge-year {
+  color: var(--secondary);
+  font-weight: 800;
+  font-size: 0.95rem;
+  font-family: var(--font-primary);
+}
+
+.badge-text {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-family: var(--font-secondary);
+}
+
+.nosotros-content-column {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Compact content */
+}
+
+.nosotros-title {
+  font-size: 3rem; /* Slightly smaller title */
+  line-height: 1;
+  font-family: var(--font-primary);
+  font-weight: 800;
+}
+
+.title-cyan {
+  color: var(--primary);
+}
+
+.nosotros-description-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem; /* Tighter paragraphs */
+}
+
+.nosotros-description {
+  font-family: var(--font-secondary);
+  color: var(--text-secondary);
+  font-size: 1.05rem; /* Slightly larger for readability */
+  line-height: 1.6;
+}
+
+.stats-container-pro {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.stat-card-pro {
+  background: white;
+  padding: 1rem;
+  border-radius: 20px;
+  flex: 1;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.stat-number {
+  font-size: 1.8rem;
+  font-weight: 800;
+  font-family: var(--font-primary);
+}
+
+.magenta-text { color: var(--secondary); }
+.cyan-text { color: var(--primary); }
+
+.stat-label {
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-weight: 800; /* Bolder for color visibility */
+  margin-top: 4px;
+}
+
+@media (max-width: 968px) {
+  .nosotros-section {
+    padding: 80px 20px 40px; 
+    height: auto;
+    min-height: auto;
+  }
+
+  .nosotros-container {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 30px; 
+  }
+
+  .nosotros-title {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+  }
+
+  .image-wrapper-pro {
+    max-width: 200px;
+    margin: 0 auto;
+  }
+  
+  .nosotros-content-column {
+    align-items: center; 
+  }
+  
+  .nosotros-description-container {
+    align-items: center;
+    text-align: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .nosotros-section {
+    padding: 60px 15px 40px; 
+  }
+
+  .nosotros-container {
+    display: grid;
+    grid-template-columns: 140px 1fr; 
+    grid-template-areas: 
+      "title title"
+      "image desc"
+      "stats stats";
+    gap: 20px 15px;
+    align-items: start;
+    text-align: left;
+  }
+
+  .nosotros-content-column {
+    display: contents; /* Allows children to participate in the grid layout directly */
+  }
+
+  .nosotros-title {
+    grid-area: title;
+    font-size: 2.5rem; /* Big title like 'Nuestros Servicios' */
+    text-align: center; /* Center the big title */
+    margin-bottom: 0;
+  }
+
+  .nosotros-image-column {
+    grid-area: image;
+    gap: 10px;
+  }
+
+  .image-wrapper-pro {
+    max-width: 140px;
+    margin: 0;
+    padding: 0.5rem;
+  }
+  
+  .image-badge-bottom {
+    padding: 6px 10px;
+  }
+  .badge-year { font-size: 0.8rem; }
+  .badge-text { font-size: 0.6rem; text-align: center; }
+
+  .nosotros-description-container {
+    grid-area: desc;
+    align-items: flex-start;
+    text-align: left;
+    gap: 0.8rem;
+  }
+
+  .nosotros-description {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .stats-container-pro {
+    grid-area: stats;
+    flex-direction: row; /* Place the two stats side-by-side at the bottom */
+    width: 100%;
+    gap: 1rem;
+    margin-top: 10px;
+  }
+
+  .stat-card-pro {
+    padding: 0.8rem;
+    display: flex;
+    flex-direction: column; /* Stack number and label vertically */
+    justify-content: center;
+    align-items: center;
+  }
+
+  .stat-number {
+    font-size: 1.5rem;
+  }
+  
+  .stat-label {
+    margin-top: 4px;
+    font-size: 0.7rem;
+  }
+}
