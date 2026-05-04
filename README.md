@@ -1,73 +1,53 @@
-# React + TypeScript + Vite
+<div align="center">
+  <img src="./public/Logo.png" alt="Papelería M&M Logo" width="250" />
+</div>
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# Papelería M&M ✏️📒
 
-Currently, two official plugins are available:
+Bienvenido al código fuente de la Landing Page de **Papelería M&M**, el emprendimiento de mi mami. Un espacio diseñado para mostrar nuestros productos y conectar mejor con el barrio.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## Nuestros Servicios
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Aquí puedes ver todo lo que ofrecemos a nuestra comunidad. Desde digitalizaciones rápidas hasta útiles escolares:
 
-## Expanding the ESLint configuration
+<div align="center">
+  <img src="./public/InternetM&M.png" alt="Servicios Papelería M&M" width="350" />
+</div>
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 🚀 Tecnologías Utilizadas
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+Este proyecto está construido con:
+* **React 19**
+* **Vite**
+* **TypeScript**
+* **Bun** (como gestor de paquetes y entorno)
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### ¿Por qué Vite + React puro?
+Se decidió utilizar **React y Vite** (en lugar de frameworks más pesados como Next.js) porque **es un proyecto pequeño** y esta combinación nos otorga la **máxima flexibilidad** y rapidez. No necesitábamos la complejidad del Server-Side Rendering para una landing page de este tipo; buscábamos un desarrollo ágil, componentes limpios y un empaquetado ultra rápido.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 💻 Desarrollo Local
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Si deseas correr este proyecto de manera local, los pasos son muy sencillos (asegúrate de tener `bun` instalado):
+
+1. Clona el repositorio:
+   ```bash
+   git clone https://github.com/Juandamm01/PapeleriaM-M.git
+   ```
+
+2. Instala las dependencias:
+   ```bash
+   bun install
+   ```
+
+3. Inicia el servidor de desarrollo:
+   ```bash
+   bun run dev
+   ```
+
+El proyecto estará corriendo localmente en tu navegador.
