@@ -1,3 +1,0 @@
-# Ignorar los estilos CSS en las estadísticas de GitHub para que TypeScript y React tengan mayor porcentaje
-*.css linguist-vendored
-*.html linguist-vendored
