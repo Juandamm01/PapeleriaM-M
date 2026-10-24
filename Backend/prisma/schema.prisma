@@ -33,9 +33,17 @@ model Pedido {
   entregadoAt          DateTime?
   /// Cuándo se borraron del disco el archivo y el comprobante por retención
   archivosEliminadosAt DateTime?
+  /// Valor a cobrar en centavos de COP; lo fija el admin al revisar el archivo
+  precioCentavos       Int?
+  estadoPago           EstadoPago    @default(PENDIENTE)
+  pagadoAt             DateTime?
+  /// true si el admin confirmó el pago a mano (efectivo o transferencia verificada)
+  pagoManual           Boolean       @default(false)
+  pagos                Pago[]
   createdAt            DateTime      @default(now())
 
   @@index([estado, createdAt])
+  @@index([estadoPago, createdAt])
   @@index([archivosEliminadosAt, createdAt])
 }
 
@@ -65,4 +73,32 @@ enum TamanoPapel {
 enum TipoImpresion {
   BN
   COLOR
+}
+
+/// Un intento de cobro con Nequi a través de Wompi. Un pedido puede tener varios intentos.
+model Pago {
+  id                 String     @id @default(uuid())
+  pedidoId           String
+  pedido             Pedido     @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  /// Referencia única enviada a Wompi: <codigo>-<n-intento>
+  referencia         String     @unique
+  montoCentavos      Int
+  estado             EstadoPago @default(PENDIENTE)
+  wompiTransactionId String?    @unique
+  /// Últimos 4 dígitos del celular Nequi (no se guarda el número completo)
+  telefonoFinal      String
+  motivo             String?
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+
+  @@index([pedidoId, createdAt])
+  @@index([estado, updatedAt])
+}
+
+enum EstadoPago {
+  PENDIENTE
+  APROBADO
+  RECHAZADO
+  EXPIRADO
+  ANULADO
 }
