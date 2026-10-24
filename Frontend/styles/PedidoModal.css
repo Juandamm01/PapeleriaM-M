@@ -621,3 +621,33 @@
     font-size: 1.15rem;
   }
 }
+
+/* Autorización de tratamiento de datos (Ley 1581) */
+.pedido-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: #3c4559;
+  font-family: var(--font-secondary);
+  font-size: 0.86rem;
+  line-height: 1.45;
+  cursor: pointer;
+}
+
+.pedido-consent input {
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: #ff1b8d;
+}
+
+.pedido-consent a {
+  color: #df0974;
+  font-weight: 700;
+}
+
+.pedido-consent em {
+  color: #ff1b8d;
+  font-style: normal;
+}

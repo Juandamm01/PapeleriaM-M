@@ -87,6 +87,7 @@ const PedidoModal = ({ isOpen, onClose }: PedidoModalProps) => {
   const [tipoImpresion, setTipoImpresion] = useState<TipoImpresion>('BN');
   const [dobleCara, setDobleCara] = useState(false);
   const [copiado, setCopiado] = useState('');
+  const [aceptaPolitica, setAceptaPolitica] = useState(false);
 
   const resetForm = () => {
     setFile(null);
@@ -101,6 +102,7 @@ const PedidoModal = ({ isOpen, onClose }: PedidoModalProps) => {
     setTipoImpresion('BN');
     setDobleCara(false);
     setCopiado('');
+    setAceptaPolitica(false);
     formRef.current?.reset();
   };
 
@@ -198,6 +200,8 @@ const PedidoModal = ({ isOpen, onClose }: PedidoModalProps) => {
     else if (nextComprobanteError) error = nextComprobanteError;
     else if (referenciaNequi && !/^[A-Za-z0-9 -]{1,40}$/.test(referenciaNequi)) {
       error = 'La referencia de Nequi solo puede tener letras, números y guiones.';
+    } else if (!aceptaPolitica) {
+      error = 'Para enviar el pedido debes autorizar el tratamiento de tus datos.';
     }
     if (error || !file || telefono === null || !paymentMethod) {
       setFormError(error);
@@ -215,6 +219,7 @@ const PedidoModal = ({ isOpen, onClose }: PedidoModalProps) => {
     body.append('tipoImpresion', tipoImpresion);
     body.append('dobleCara', String(dobleCara));
     body.append('metodoPago', paymentMethod);
+    body.append('aceptaPolitica', 'true');
     if (paymentMethod === 'NEQUI') {
       if (referenciaNequi) body.append('referenciaNequi', referenciaNequi);
       if (comprobante) body.append('comprobante', comprobante);
@@ -460,6 +465,22 @@ const PedidoModal = ({ isOpen, onClose }: PedidoModalProps) => {
                   </div>
                 )}
               </fieldset>
+
+              <label className="pedido-consent">
+                <input
+                  type="checkbox"
+                  checked={aceptaPolitica}
+                  onChange={(event) => setAceptaPolitica(event.target.checked)}
+                  required
+                />
+                <span>
+                  Autorizo el tratamiento de mis datos para gestionar mi pedido, según la{' '}
+                  <a href="/privacidad" target="_blank" rel="noopener noreferrer">
+                    política de privacidad
+                  </a>
+                  . <em>*</em>
+                </span>
+              </label>
 
               {formError && <p className="pedido-form-error" role="alert">{formError}</p>}
 

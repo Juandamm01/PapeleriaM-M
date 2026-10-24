@@ -1,0 +1,95 @@
+/* La landing deja html/body/#root con overflow: hidden; esta página maneja su propio scroll */
+.privacidad-page {
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 32px 16px 48px;
+  background-color: #f9fbfe;
+  background-image:
+    linear-gradient(var(--grid-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+  background-size: 32px 32px;
+  font-family: var(--font-primary);
+}
+
+.privacidad-container {
+  width: min(100%, 760px);
+  margin: 0 auto;
+}
+
+.privacidad-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 18px;
+  color: #ff1b8d;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.privacidad-back:hover {
+  text-decoration: underline;
+}
+
+.privacidad-card {
+  padding: clamp(24px, 6vw, 48px);
+  border: 1px solid rgba(27, 197, 255, 0.2);
+  border-radius: 32px;
+  background: rgba(255, 255, 255, 0.97);
+  box-shadow: 0 24px 60px rgba(15, 28, 55, 0.1);
+  color: #3c4559;
+  font-family: var(--font-secondary);
+  font-size: 0.98rem;
+  line-height: 1.65;
+}
+
+.privacidad-kicker {
+  display: block;
+  margin-bottom: 8px;
+  color: #ff1b8d;
+  font-family: var(--font-primary);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.privacidad-card h1 {
+  color: #252c40;
+  font-family: var(--font-primary);
+  font-size: clamp(1.7rem, 5vw, 2.3rem);
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.privacidad-meta {
+  margin: 8px 0 20px;
+  color: #7b8496;
+  font-size: 0.85rem;
+}
+
+.privacidad-card h2 {
+  margin: 28px 0 8px;
+  color: #1189b3;
+  font-family: var(--font-primary);
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.privacidad-card p + p {
+  margin-top: 10px;
+}
+
+.privacidad-card ul {
+  display: grid;
+  gap: 6px;
+  margin: 8px 0 10px;
+  padding-left: 22px;
+  list-style: disc;
+}
+
+.privacidad-card a {
+  color: #df0974;
+  font-weight: 700;
+}

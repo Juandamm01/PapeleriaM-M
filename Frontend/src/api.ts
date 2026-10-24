@@ -9,6 +9,7 @@ export const hasApi = API_URL !== '';
 export const apiUrl = (path: string) => `${API_URL}${path.startsWith('/') ? path : `/${path}`}`;
 
 export const WHATSAPP_NUMERO = '573138395365';
+export const WHATSAPP_VISIBLE = '313 839 5365';
 export const NEQUI_NUMERO = '313 839 5365';
 
 export const whatsappLink = (texto: string) =>
