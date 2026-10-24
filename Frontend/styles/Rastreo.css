@@ -243,3 +243,23 @@
     min-height: 48px;
   }
 }
+
+.rastreo-pagado {
+  margin-top: 18px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(37, 211, 102, 0.1);
+  color: #1d7a45;
+  font-weight: 800;
+}
+
+.rastreo-sin-precio {
+  margin-top: 18px;
+  padding: 12px 14px;
+  border: 1px dashed #dde3ec;
+  border-radius: 16px;
+  color: #687083;
+  font-family: var(--font-secondary);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}

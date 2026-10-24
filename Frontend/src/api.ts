@@ -26,3 +26,8 @@ export async function responseMessage(response: Response, fallback: string) {
   }
   return fallback;
 }
+
+const pesos = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 });
+
+/** Formatea centavos de COP como pesos: 1500000 → "$ 15.000". */
+export const formatoPesos = (centavos: number) => pesos.format(Math.round(centavos / 100));

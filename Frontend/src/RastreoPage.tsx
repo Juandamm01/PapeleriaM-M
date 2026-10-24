@@ -1,7 +1,8 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, CheckCircle2, Clock, LoaderCircle, PackageCheck, Search } from 'lucide-react';
-import { apiUrl, hasApi, responseMessage, whatsappLink } from './api';
+import { apiUrl, formatoPesos, hasApi, responseMessage, whatsappLink } from './api';
+import PagoNequi from './PagoNequi';
 import '../styles/Rastreo.css';
 
 type EstadoPedido = 'PENDIENTE' | 'LISTO' | 'ENTREGADO';
@@ -14,6 +15,8 @@ type PedidoRastreo = {
   tipoImpresion: 'BN' | 'COLOR';
   dobleCara: boolean;
   metodoPago: 'NEQUI' | 'EFECTIVO';
+  precioCentavos: number | null;
+  estadoPago: 'PENDIENTE' | 'APROBADO' | 'RECHAZADO' | 'EXPIRADO' | 'ANULADO';
   createdAt: string;
 };
 
@@ -88,6 +91,11 @@ function RastreoPage() {
       setCargando(false);
     }
   };
+
+  const marcarPagado = useCallback(
+    () => setPedido((actual) => (actual ? { ...actual, estadoPago: 'APROBADO' } : actual)),
+    [],
+  );
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -176,6 +184,24 @@ function RastreoPage() {
                       );
                     })}
                   </ol>
+
+                  {pedido.estadoPago === 'APROBADO' ? (
+                    <p className="rastreo-pagado">
+                      Pago recibido
+                      {pedido.precioCentavos ? ` · ${formatoPesos(pedido.precioCentavos)}` : ''}
+                    </p>
+                  ) : pedido.precioCentavos ? (
+                    <PagoNequi
+                      codigo={pedido.codigo}
+                      montoCentavos={pedido.precioCentavos}
+                      onPagado={marcarPagado}
+                    />
+                  ) : (
+                    <p className="rastreo-sin-precio">
+                      Estamos revisando tu archivo. Cuando tengamos el valor podrás pagarlo aquí con Nequi, o
+                      en el local al recoger.
+                    </p>
+                  )}
                 </div>
               )}
             </>

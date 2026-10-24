@@ -1,0 +1,185 @@
+.pago-nequi {
+  display: grid;
+  gap: 12px;
+  margin-top: 20px;
+  padding: 18px;
+  border: 1px solid rgba(255, 27, 141, 0.25);
+  border-radius: 22px;
+  background: rgba(255, 27, 141, 0.04);
+  font-family: var(--font-secondary);
+}
+
+.pago-nequi-cargando {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #687083;
+  font-size: 0.9rem;
+}
+
+.pago-nequi-total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  color: #3c4559;
+  font-weight: 700;
+}
+
+.pago-nequi-total strong {
+  color: #252c40;
+  font-family: var(--font-primary);
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
+.pago-nequi-campo {
+  display: grid;
+  gap: 6px;
+  color: #3c4559;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.pago-nequi-campo input {
+  padding: 12px 14px;
+  border: 1px solid #dde3ec;
+  border-radius: 13px;
+  background: #fff;
+  color: #252c40;
+  font: inherit;
+  font-size: 1rem;
+  outline: none;
+}
+
+.pago-nequi-campo input:focus {
+  border-color: #1bc5ff;
+  box-shadow: 0 0 0 3px rgba(27, 197, 255, 0.14);
+}
+
+.pago-nequi-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: #3c4559;
+  font-size: 0.86rem;
+  line-height: 1.45;
+  cursor: pointer;
+}
+
+.pago-nequi-check input {
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: #ff1b8d;
+}
+
+.pago-nequi a {
+  color: #df0974;
+  font-weight: 700;
+}
+
+.pago-nequi button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 50px;
+  border: 0;
+  border-radius: 15px;
+  background: #ff1b8d;
+  color: #fff;
+  font-family: var(--font-primary);
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(255, 27, 141, 0.24);
+}
+
+.pago-nequi button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.pago-nequi-nota {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #7b8496;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.pago-nequi-error {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 27, 141, 0.08);
+  color: #c9275c;
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.pago-nequi-esperando {
+  justify-items: center;
+  text-align: center;
+  color: #3c4559;
+}
+
+.pago-nequi-esperando svg:first-child {
+  color: #ff1b8d;
+}
+
+.pago-nequi-esperando strong {
+  color: #252c40;
+  font-family: var(--font-primary);
+  font-size: 1.15rem;
+}
+
+.pago-nequi-monto {
+  color: #df0974;
+  font-family: var(--font-primary);
+  font-size: 1.8rem;
+  font-weight: 800;
+}
+
+.pago-nequi-final {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 16px;
+}
+
+.pago-nequi-final div {
+  display: grid;
+  gap: 2px;
+}
+
+.pago-nequi-final.is-ok {
+  border-color: rgba(37, 211, 102, 0.4);
+  background: rgba(37, 211, 102, 0.08);
+  color: #1d7a45;
+}
+
+.pago-nequi-final.is-ok strong {
+  font-family: var(--font-primary);
+  font-size: 1.1rem;
+}
+
+.pago-nequi-final.is-error {
+  background: rgba(255, 27, 141, 0.08);
+  color: #c9275c;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.pago-nequi-spinner {
+  animation: pago-nequi-spin 0.8s linear infinite;
+}
+
+@keyframes pago-nequi-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
