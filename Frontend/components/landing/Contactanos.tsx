@@ -26,7 +26,7 @@ const Contactanos: React.FC = () => {
         <ScrollReveal direction="up" delay={0.2} blur={true} scale={true}>
           <a
             className="whatsapp-card"
-            href="https://wa.me/573028365677"
+            href="https://wa.me/573138395365"
             target="_blank"
             rel="noreferrer"
             aria-label="Chatea con nosotros por WhatsApp"
@@ -35,7 +35,7 @@ const Contactanos: React.FC = () => {
               <MessageCircle size={30} strokeWidth={2.5} />
             </span>
             <span className="whatsapp-label">Chatea con nosotros</span>
-            <span className="whatsapp-number">302 836 5677</span>
+            <span className="whatsapp-number">313 839 5365</span>
           </a>
         </ScrollReveal>
 

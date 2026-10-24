@@ -92,7 +92,7 @@ const Footer: React.FC = () => {
             <FooterColumn
               title="Síguenos"
               links={[
-                { label: 'WhatsApp', href: 'https://wa.me/573028365677' },
+                { label: 'WhatsApp', href: 'https://wa.me/573138395365' },
                 { label: 'Instagram', href: '#' },
               ]}
             />
