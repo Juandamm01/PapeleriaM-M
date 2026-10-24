@@ -2,9 +2,16 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { CloudUpload } from 'lucide-react';
 import { FadeIn, BouncyHover, SectionHighlight } from './animations';
+import { hasApi, whatsappLink } from '../../src/api';
 import '../../styles/Hero.css';
 
-const Hero: React.FC = () => {
+type HeroProps = {
+  onUploadClick: () => void;
+};
+
+const WHATSAPP_PEDIDO_URL = whatsappLink('Hola, quiero imprimir un documento');
+
+const Hero: React.FC<HeroProps> = ({ onUploadClick }) => {
   return (
     <SectionHighlight id="inicio" className="hero-section snap-section" zIndex={10} sticky={false}>
       <motion.div 
@@ -16,7 +23,7 @@ const Hero: React.FC = () => {
       >
         <FadeIn delay={0.1} direction="up">
           <div className="badge">
-            Mi negocio
+            Fotocopias e impresiones
           </div>
         </FadeIn>
 
@@ -37,10 +44,22 @@ const Hero: React.FC = () => {
         <FadeIn delay={0.4} direction="up">
           <div className="button-group">
             <BouncyHover scale={1.05}>
-              <button className="btn btn-primary">
-                <CloudUpload size={20} />
-                Subir Archivo
-              </button>
+              {hasApi ? (
+                <button className="btn btn-primary" type="button" onClick={onUploadClick}>
+                  <CloudUpload size={20} />
+                  Subir Archivo
+                </button>
+              ) : (
+                <a
+                  className="btn btn-primary"
+                  href={WHATSAPP_PEDIDO_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <CloudUpload size={20} />
+                  Subir Archivo
+                </a>
+              )}
             </BouncyHover>
             
             <BouncyHover scale={1.05}>
