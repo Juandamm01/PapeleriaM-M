@@ -76,6 +76,32 @@ El proyecto estará corriendo localmente en tu navegador.
 
 ## 🔧 Estado del proyecto
 
-Actualmente el proyecto cuenta con el frontend completo y funcional, organizado 
-en su carpeta `Frontend/`. El backend (para digitalizar el flujo de pedidos) está 
-planeado como siguiente fase, en una carpeta separada.
+El proyecto contiene una landing page en `Frontend/` y una API de pedidos con un
+panel administrativo en `Backend/`.
+
+## Administración y API
+
+Configura `Backend/.env` a partir de `Backend/.env.example`, incluyendo las
+variables del administrador, JWT y URL del frontend. No compartas ni publiques
+el archivo `.env`.
+
+La API y PostgreSQL corren como contenedores en la red de Docker Compose. Desde
+PowerShell, inicia ambos servicios con:
+
+```powershell
+cd Backend
+docker compose up
+```
+
+Compose aplica las migraciones y ejecuta el seed del administrador al iniciar la
+API; la base de datos no publica el puerto 5432 en Windows. La API queda
+disponible en `http://localhost:3000`. En otra terminal, inicia Vite:
+
+```powershell
+cd Frontend
+bun install
+bun run dev
+```
+
+El panel está en `/admin/login`. Para cambiar la URL de la API del frontend,
+configura `VITE_API_URL` en `Frontend/.env`.
