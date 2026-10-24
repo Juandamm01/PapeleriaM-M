@@ -13,9 +13,7 @@
     "start:prod": "node dist/main",
     "seed": "bun x prisma db seed",
     "lint": "eslint \"{src,test}/**/*.ts\" --fix",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:cov": "jest --coverage"
+    "test": "bun test/firmas.check.ts"
   },
   "prisma": {
     "seed": "bun prisma/seed.ts"
