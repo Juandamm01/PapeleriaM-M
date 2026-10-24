@@ -8,17 +8,28 @@ datasource db {
 }
 
 model Pedido {
-  id            String      @id @default(uuid())
-  nombre        String
-  correo        String
-  telefono      String?
-  notas         String?
-  archivoNombre String
-  archivoRuta   String
-  tipoArchivo   String
-  metodoPago    MetodoPago
-  estado        EstadoPedido @default(PENDIENTE)
-  createdAt     DateTime    @default(now())
+  id                String        @id @default(uuid())
+  codigo            String        @unique
+  nombre            String
+  correo            String
+  telefono          String?
+  notas             String?
+  archivoNombre     String
+  archivoRuta       String
+  tipoArchivo       String
+  copias            Int           @default(1)
+  tamano            TamanoPapel   @default(CARTA)
+  tipoImpresion     TipoImpresion @default(BN)
+  dobleCara         Boolean       @default(false)
+  metodoPago        MetodoPago
+  referenciaNequi   String?
+  comprobanteNombre String?
+  comprobanteRuta   String?
+  comprobanteTipo   String?
+  estado            EstadoPedido  @default(PENDIENTE)
+  createdAt         DateTime      @default(now())
+
+  @@index([estado, createdAt])
 }
 
 model Admin {
@@ -37,4 +48,14 @@ enum EstadoPedido {
   PENDIENTE
   LISTO
   ENTREGADO
+}
+
+enum TamanoPapel {
+  CARTA
+  OFICIO
+}
+
+enum TipoImpresion {
+  BN
+  COLOR
 }

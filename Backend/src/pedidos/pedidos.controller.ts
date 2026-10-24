@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  Body,
   Controller,
   Get,
   Param,
@@ -8,29 +9,32 @@ import {
   Post,
   Query,
   StreamableFile,
-  UploadedFile,
-  UseInterceptors,
-  Body,
+  UploadedFiles,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { createReadStream } from 'fs';
 import { memoryStorage } from 'multer';
-import { extname } from 'path';
 import { AuthGuard } from '../auth/auth.guard';
+import {
+  CampoArchivo,
+  contenidoValido,
+  extensionYMimePermitidos,
+  MAX_ARCHIVO_BYTES,
+  MAX_COMPROBANTE_BYTES,
+} from './archivos';
 import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { ListPedidosDto } from './dto/list-pedidos.dto';
+import { RastreoParamsDto } from './dto/rastreo.dto';
 import { UpdateEstadoDto } from './dto/update-estado.dto';
 import { PedidosService } from './pedidos.service';
 
-const MAX_FILE_SIZE = 15 * 1024 * 1024;
-const allowedTypes = new Map([
-  ['.pdf', ['application/pdf']],
-  ['.doc', ['application/msword']],
-  ['.docx', ['application/vnd.openxmlformats-officedocument.wordprocessingml.document']],
-  ['.xls', ['application/vnd.ms-excel']],
-  ['.xlsx', ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']],
-]);
+type ArchivosSubidos = {
+  archivo?: Express.Multer.File[];
+  comprobante?: Express.Multer.File[];
+};
 
 @Controller('pedidos')
 export class PedidosController {
@@ -42,22 +46,29 @@ export class PedidosController {
     return this.pedidosService.list(query);
   }
 
+  // Público: el cliente consulta su pedido con el código. Va antes de las rutas con :id.
+  @Get('rastreo/:codigo')
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 30, ttl: 60_000 } })
+  rastreo(@Param() params: RastreoParamsDto) {
+    return this.pedidosService.rastreo(params.codigo);
+  }
+
   @Get(':id/archivo')
   @UseGuards(AuthGuard)
   async download(@Param('id', ParseUUIDPipe) id: string) {
-    const file = await this.pedidosService.getDownload(id);
-    return new StreamableFile(createReadStream(file.filePath), {
-      type: file.contentType,
-      disposition: `attachment; filename="${file.filename}"`,
-    });
+    return this.stream(await this.pedidosService.getDownload(id, 'archivo'));
+  }
+
+  @Get(':id/comprobante')
+  @UseGuards(AuthGuard)
+  async downloadComprobante(@Param('id', ParseUUIDPipe) id: string) {
+    return this.stream(await this.pedidosService.getDownload(id, 'comprobante'));
   }
 
   @Patch(':id/estado')
   @UseGuards(AuthGuard)
-  updateEstado(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Body() dto: UpdateEstadoDto,
-  ) {
+  updateEstado(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateEstadoDto) {
     return this.pedidosService.updateEstado(id, dto);
   }
 
@@ -68,25 +79,65 @@ export class PedidosController {
   }
 
   @Post()
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 10, ttl: 10 * 60_000 } })
   @UseInterceptors(
-    FileInterceptor('archivo', {
-      storage: memoryStorage(),
-      limits: { fileSize: MAX_FILE_SIZE },
-      fileFilter: (_request, file, callback) => {
-        const extension = extname(file.originalname).toLowerCase();
-        const mimeTypes = allowedTypes.get(extension);
-        if (!mimeTypes?.includes(file.mimetype)) {
-          callback(new BadRequestException('Tipo de archivo no permitido'), false);
-          return;
-        }
-        callback(null, true);
+    FileFieldsInterceptor(
+      [
+        { name: 'archivo', maxCount: 1 },
+        { name: 'comprobante', maxCount: 1 },
+      ],
+      {
+        storage: memoryStorage(),
+        limits: { fileSize: MAX_ARCHIVO_BYTES, files: 2 },
+        fileFilter: (_request, file, callback) => {
+          const campo = file.fieldname as CampoArchivo;
+          if (!extensionYMimePermitidos(campo, file.originalname, file.mimetype)) {
+            callback(
+              new BadRequestException(
+                campo === 'archivo'
+                  ? 'Solo se aceptan archivos PDF, Word o Excel.'
+                  : 'El comprobante debe ser una imagen JPG, PNG o WEBP, o un PDF.',
+              ),
+              false,
+            );
+            return;
+          }
+          callback(null, true);
+        },
       },
-    }),
+    ),
   )
-  create(@UploadedFile() file: Express.Multer.File, @Body() createPedidoDto: CreatePedidoDto) {
-    if (!file) {
-      throw new BadRequestException('El archivo es obligatorio');
+  create(@UploadedFiles() files: ArchivosSubidos, @Body() createPedidoDto: CreatePedidoDto) {
+    const archivo = files?.archivo?.[0];
+    const comprobante = files?.comprobante?.[0];
+    if (!archivo) {
+      throw new BadRequestException('El archivo es obligatorio.');
     }
-    return this.pedidosService.create(createPedidoDto, file);
+    if (!contenidoValido('archivo', archivo.originalname, archivo.buffer)) {
+      throw new BadRequestException('El contenido del archivo no coincide con su tipo.');
+    }
+    if (comprobante) {
+      if (createPedidoDto.metodoPago !== 'NEQUI') {
+        throw new BadRequestException('El comprobante solo aplica para pagos con Nequi.');
+      }
+      if (comprobante.size > MAX_COMPROBANTE_BYTES) {
+        throw new BadRequestException('El comprobante no puede superar los 5 MB.');
+      }
+      if (!contenidoValido('comprobante', comprobante.originalname, comprobante.buffer)) {
+        throw new BadRequestException('El contenido del comprobante no coincide con su tipo.');
+      }
+    }
+    if (createPedidoDto.metodoPago !== 'NEQUI') {
+      createPedidoDto.referenciaNequi = undefined;
+    }
+    return this.pedidosService.create(createPedidoDto, archivo, comprobante);
+  }
+
+  private stream(file: { filePath: string; filename: string; contentType: string }) {
+    return new StreamableFile(createReadStream(file.filePath), {
+      type: file.contentType,
+      disposition: `attachment; filename="${file.filename}"`,
+    });
   }
 }
