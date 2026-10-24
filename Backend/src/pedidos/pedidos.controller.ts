@@ -29,6 +29,7 @@ import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { ListPedidosDto } from './dto/list-pedidos.dto';
 import { RastreoParamsDto } from './dto/rastreo.dto';
 import { UpdateEstadoDto } from './dto/update-estado.dto';
+import { PagoManualDto, PrecioDto, ResumenDto } from './dto/pago.dto';
 import { PedidosService } from './pedidos.service';
 
 type ArchivosSubidos = {
@@ -44,6 +45,13 @@ export class PedidosController {
   @UseGuards(AuthGuard)
   list(@Query() query: ListPedidosDto) {
     return this.pedidosService.list(query);
+  }
+
+  // Va antes de las rutas con :id para que "resumen" no se tome como un id
+  @Get('resumen')
+  @UseGuards(AuthGuard)
+  resumen(@Query() query: ResumenDto) {
+    return this.pedidosService.resumen(query.fecha);
   }
 
   // Público: el cliente consulta su pedido con el código. Va antes de las rutas con :id.
@@ -70,6 +78,18 @@ export class PedidosController {
   @UseGuards(AuthGuard)
   updateEstado(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateEstadoDto) {
     return this.pedidosService.updateEstado(id, dto);
+  }
+
+  @Patch(':id/precio')
+  @UseGuards(AuthGuard)
+  fijarPrecio(@Param('id', ParseUUIDPipe) id: string, @Body() dto: PrecioDto) {
+    return this.pedidosService.fijarPrecio(id, dto);
+  }
+
+  @Patch(':id/pago-manual')
+  @UseGuards(AuthGuard)
+  marcarPagoManual(@Param('id', ParseUUIDPipe) id: string, @Body() dto: PagoManualDto) {
+    return this.pedidosService.marcarPagoManual(id, dto);
   }
 
   @Get(':id')

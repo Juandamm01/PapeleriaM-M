@@ -1,5 +1,5 @@
 import { Transform, Type } from 'class-transformer';
-import { EstadoPedido } from '@prisma/client';
+import { EstadoPago, EstadoPedido } from '@prisma/client';
 import { IsEnum, IsInt, IsOptional, IsString, Max, MaxLength, Min } from 'class-validator';
 
 export class ListPedidosDto {
@@ -19,6 +19,10 @@ export class ListPedidosDto {
   @IsOptional()
   @IsEnum(EstadoPedido)
   estado?: EstadoPedido;
+
+  @IsOptional()
+  @IsEnum(EstadoPago)
+  estadoPago?: EstadoPago;
 
   /** Busca por código, nombre o teléfono */
   @Transform(({ value }) =>

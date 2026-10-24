@@ -1,5 +1,5 @@
-import { GoneException, Injectable, NotFoundException } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { ConflictException, GoneException, Injectable, NotFoundException } from '@nestjs/common';
+import { EstadoPago, Prisma } from '@prisma/client';
 import { randomInt, randomUUID } from 'crypto';
 import { mkdir, realpath, rm, stat, writeFile } from 'fs/promises';
 import { basename, extname, isAbsolute, join, relative, resolve, sep } from 'path';
@@ -8,6 +8,7 @@ import { CampoArchivo } from './archivos';
 import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { ListPedidosDto } from './dto/list-pedidos.dto';
 import { UpdateEstadoDto } from './dto/update-estado.dto';
+import { PagoManualDto, PrecioDto } from './dto/pago.dto';
 
 // Sin 0/O ni 1/I/L para que el código se pueda dictar por teléfono sin confusiones
 const ALFABETO_CODIGO = '23456789ABCDEFGHJKMNPQRSTUVWXYZ';
@@ -33,8 +34,31 @@ const camposAdmin = {
   consentimientoAt: true,
   entregadoAt: true,
   archivosEliminadosAt: true,
+  precioCentavos: true,
+  estadoPago: true,
+  pagadoAt: true,
+  pagoManual: true,
+  pagos: {
+    select: { referencia: true, estado: true, wompiTransactionId: true, montoCentavos: true, createdAt: true },
+    orderBy: { createdAt: 'desc' },
+    take: 3,
+  },
   createdAt: true,
 } satisfies Prisma.PedidoSelect;
+
+// Colombia no tiene horario de verano: el día local va de 05:00 UTC a 05:00 UTC del día siguiente
+const OFFSET_COLOMBIA_MS = 5 * 60 * 60_000;
+// Comisión estimada de Wompi por transacción aprobada: 2,65 % + $700, más IVA del 19 %
+const comisionEstimada = (centavos: number) => Math.round((centavos * 0.0265 + 70_000) * 1.19);
+
+function rangoDelDia(fecha?: string) {
+  const base = fecha
+    ? new Date(`${fecha}T00:00:00.000Z`)
+    : new Date(new Date(Date.now() - OFFSET_COLOMBIA_MS).toISOString().slice(0, 10) + 'T00:00:00.000Z');
+  if (Number.isNaN(base.getTime())) throw new NotFoundException('Fecha inválida');
+  const desde = new Date(base.getTime() + OFFSET_COLOMBIA_MS);
+  return { dia: base.toISOString().slice(0, 10), desde, hasta: new Date(desde.getTime() + 24 * 60 * 60_000) };
+}
 
 function generarCodigo() {
   let sufijo = '';
@@ -125,6 +149,8 @@ export class PedidosService {
         tipoImpresion: true,
         dobleCara: true,
         metodoPago: true,
+        precioCentavos: true,
+        estadoPago: true,
         createdAt: true,
       },
     });
@@ -135,9 +161,10 @@ export class PedidosService {
   }
 
   async list(query: ListPedidosDto) {
-    const { page, limit, estado, q } = query;
+    const { page, limit, estado, estadoPago, q } = query;
     const where: Prisma.PedidoWhereInput = {
       ...(estado ? { estado } : {}),
+      ...(estadoPago ? { estadoPago } : {}),
       ...(q
         ? {
             OR: [
@@ -185,6 +212,90 @@ export class PedidosService {
       }
       throw error;
     }
+  }
+
+  async fijarPrecio(id: string, dto: PrecioDto) {
+    const pedido = await this.prisma.pedido.findUnique({ where: { id }, select: { estadoPago: true } });
+    if (!pedido) throw new NotFoundException('Pedido no encontrado');
+    if (pedido.estadoPago === EstadoPago.APROBADO) {
+      throw new ConflictException('El pedido ya está pagado: no se puede cambiar el precio.');
+    }
+    // Si hay un cobro esperando aprobación en Nequi, cambiar el precio dejaría montos distintos
+    const abierto = await this.prisma.pago.count({ where: { pedidoId: id, estado: EstadoPago.PENDIENTE } });
+    if (abierto > 0) {
+      throw new ConflictException('Hay un pago con Nequi en curso. Espera a que termine para cambiar el precio.');
+    }
+    return this.prisma.pedido.update({
+      where: { id },
+      data: { precioCentavos: dto.precio * 100 },
+      select: camposAdmin,
+    });
+  }
+
+  async marcarPagoManual(id: string, dto: PagoManualDto) {
+    const pedido = await this.prisma.pedido.findUnique({
+      where: { id },
+      select: { estadoPago: true, pagoManual: true },
+    });
+    if (!pedido) throw new NotFoundException('Pedido no encontrado');
+    if (dto.pagado) {
+      if (pedido.estadoPago === EstadoPago.APROBADO) return this.getById(id);
+      return this.prisma.pedido.update({
+        where: { id },
+        data: { estadoPago: EstadoPago.APROBADO, pagadoAt: new Date(), pagoManual: true },
+        select: camposAdmin,
+      });
+    }
+    // Solo se puede deshacer una confirmación manual; un pago aprobado por Wompi no se revierte aquí
+    if (pedido.estadoPago === EstadoPago.APROBADO && !pedido.pagoManual) {
+      throw new ConflictException('Este pago lo confirmó Wompi; no se puede desmarcar desde el panel.');
+    }
+    return this.prisma.pedido.update({
+      where: { id },
+      data: { estadoPago: EstadoPago.PENDIENTE, pagadoAt: null, pagoManual: false },
+      select: camposAdmin,
+    });
+  }
+
+  /** Resumen de un día (hora de Colombia) para cuadrar contra la app de Nequi. */
+  async resumen(fecha?: string) {
+    const { dia, desde, hasta } = rangoDelDia(fecha);
+    const [recibidos, porEstado, nequi, manuales] = await Promise.all([
+      this.prisma.pedido.count({ where: { createdAt: { gte: desde, lt: hasta } } }),
+      this.prisma.pedido.groupBy({
+        by: ['estado'],
+        where: { createdAt: { gte: desde, lt: hasta } },
+        _count: { _all: true },
+      }),
+      this.prisma.pago.findMany({
+        where: { estado: EstadoPago.APROBADO, updatedAt: { gte: desde, lt: hasta } },
+        select: { referencia: true, montoCentavos: true, wompiTransactionId: true, updatedAt: true },
+        orderBy: { updatedAt: 'asc' },
+      }),
+      this.prisma.pedido.aggregate({
+        where: { pagoManual: true, pagadoAt: { gte: desde, lt: hasta } },
+        _count: { _all: true },
+        _sum: { precioCentavos: true },
+      }),
+    ]);
+    const totalNequi = nequi.reduce((suma, pago) => suma + pago.montoCentavos, 0);
+    const comision = nequi.reduce((suma, pago) => suma + comisionEstimada(pago.montoCentavos), 0);
+    return {
+      dia,
+      pedidosRecibidos: recibidos,
+      porEstado: Object.fromEntries(porEstado.map((fila) => [fila.estado, fila._count._all])),
+      nequiWompi: {
+        cantidad: nequi.length,
+        totalCentavos: totalNequi,
+        comisionEstimadaCentavos: comision,
+        netoEstimadoCentavos: totalNequi - comision,
+        pagos: nequi,
+      },
+      manual: {
+        cantidad: manuales._count._all,
+        totalCentavos: manuales._sum.precioCentavos ?? 0,
+      },
+    };
   }
 
   async getDownload(id: string, campo: CampoArchivo) {
