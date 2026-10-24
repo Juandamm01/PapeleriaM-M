@@ -1,0 +1,245 @@
+/* La landing deja html/body/#root con overflow: hidden; esta página maneja su propio scroll */
+.rastreo-page {
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 32px 16px 48px;
+  background-color: #f9fbfe;
+  background-image:
+    linear-gradient(var(--grid-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+  background-size: 32px 32px;
+  font-family: var(--font-primary);
+}
+
+.rastreo-container {
+  width: min(100%, 560px);
+  margin: 0 auto;
+}
+
+.rastreo-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 18px;
+  color: #ff1b8d;
+  font-weight: 700;
+  font-size: 0.92rem;
+  text-decoration: none;
+}
+
+.rastreo-back:hover {
+  text-decoration: underline;
+}
+
+.rastreo-card {
+  padding: clamp(24px, 6vw, 40px);
+  border: 1px solid rgba(27, 197, 255, 0.2);
+  border-radius: 32px;
+  background: rgba(255, 255, 255, 0.97);
+  box-shadow: 0 24px 60px rgba(15, 28, 55, 0.12);
+}
+
+.rastreo-kicker {
+  display: block;
+  margin-bottom: 8px;
+  color: #ff1b8d;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.rastreo-card h1 {
+  margin-bottom: 10px;
+  color: #252c40;
+  font-size: clamp(1.9rem, 6vw, 2.5rem);
+  font-weight: 800;
+  line-height: 1.05;
+}
+
+.rastreo-intro {
+  color: #687083;
+  font-family: var(--font-secondary);
+  font-size: 0.98rem;
+  line-height: 1.5;
+}
+
+.rastreo-form {
+  display: grid;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.rastreo-label {
+  color: #3c4559;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.rastreo-input-row {
+  display: flex;
+  gap: 10px;
+}
+
+.rastreo-input-row input {
+  flex: 1;
+  min-width: 0;
+  padding: 13px 14px;
+  border: 1px solid #dde3ec;
+  border-radius: 14px;
+  background: #fbfcfe;
+  color: #252c40;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 1.05rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  outline: none;
+}
+
+.rastreo-input-row input:focus {
+  border-color: #1bc5ff;
+  box-shadow: 0 0 0 3px rgba(27, 197, 255, 0.14);
+}
+
+.rastreo-input-row button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 14px;
+  background: #ff1b8d;
+  color: #fff;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(255, 27, 141, 0.24);
+}
+
+.rastreo-input-row button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.rastreo-spinner {
+  animation: rastreo-spin 0.8s linear infinite;
+}
+
+.rastreo-error {
+  margin-top: 14px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 27, 141, 0.08);
+  color: #c9275c;
+  font-family: var(--font-secondary);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.rastreo-resultado {
+  margin-top: 24px;
+  padding-top: 22px;
+  border-top: 1px dashed #dde3ec;
+}
+
+.rastreo-resumen {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 20px;
+  color: #687083;
+  font-family: var(--font-secondary);
+  font-size: 0.9rem;
+}
+
+.rastreo-resumen strong {
+  color: #ff1b8d;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 1.15rem;
+  letter-spacing: 0.06em;
+}
+
+.rastreo-pasos {
+  display: grid;
+  gap: 12px;
+  list-style: none;
+}
+
+.rastreo-paso {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid #eef1f6;
+  border-radius: 18px;
+  color: #a3aab8;
+}
+
+.rastreo-paso strong {
+  display: block;
+  font-size: 1rem;
+}
+
+.rastreo-paso small {
+  display: block;
+  margin-top: 2px;
+  color: #687083;
+  font-family: var(--font-secondary);
+  font-size: 0.85rem;
+}
+
+.rastreo-paso-icono {
+  display: grid;
+  place-items: center;
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  background: #f3f5f9;
+}
+
+.rastreo-paso.is-done {
+  color: #3c4559;
+}
+
+.rastreo-paso.is-done .rastreo-paso-icono {
+  background: rgba(27, 197, 255, 0.14);
+  color: #1189b3;
+}
+
+.rastreo-paso.is-current {
+  border-color: #ff1b8d;
+  background: rgba(255, 27, 141, 0.05);
+  color: #252c40;
+}
+
+.rastreo-paso.is-current .rastreo-paso-icono {
+  background: #ff1b8d;
+  color: #fff;
+}
+
+.rastreo-whatsapp {
+  display: inline-block;
+  margin-top: 24px;
+  color: #1189b3;
+  font-family: var(--font-secondary);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+@keyframes rastreo-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 430px) {
+  .rastreo-input-row {
+    flex-direction: column;
+  }
+
+  .rastreo-input-row button {
+    justify-content: center;
+    min-height: 48px;
+  }
+}

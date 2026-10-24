@@ -78,6 +78,7 @@ const Footer: React.FC = () => {
                 { label: 'Nosotros', href: '#nosotros' },
                 { label: 'Servicios', href: '#servicios' },
                 { label: 'Contacto', href: '#contacto' },
+                { label: 'Rastrear pedido', href: '/rastreo' },
               ]}
             />
             <FooterColumn
