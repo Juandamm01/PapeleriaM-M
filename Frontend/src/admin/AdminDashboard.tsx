@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { apiUrl, hasApi, responseMessage } from '../api';
+import { apiUrl, formatoPesos, hasApi, responseMessage } from '../api';
 import { useNoIndexMeta } from './useNoIndexMeta';
 import './admin.css';
 
 type EstadoPedido = 'PENDIENTE' | 'LISTO' | 'ENTREGADO';
+type EstadoPago = 'PENDIENTE' | 'APROBADO' | 'RECHAZADO' | 'EXPIRADO' | 'ANULADO';
 type Archivo = 'archivo' | 'comprobante';
 
 type Pedido = {
@@ -25,7 +26,25 @@ type Pedido = {
   comprobanteNombre: string | null;
   estado: EstadoPedido;
   archivosEliminadosAt: string | null;
+  precioCentavos: number | null;
+  estadoPago: EstadoPago;
+  pagadoAt: string | null;
+  pagoManual: boolean;
+  pagos: { referencia: string; estado: EstadoPago; wompiTransactionId: string | null; montoCentavos: number; createdAt: string }[];
   createdAt: string;
+};
+
+type Resumen = {
+  dia: string;
+  pedidosRecibidos: number;
+  porEstado: Partial<Record<EstadoPedido, number>>;
+  nequiWompi: {
+    cantidad: number;
+    totalCentavos: number;
+    comisionEstimadaCentavos: number;
+    netoEstimadoCentavos: number;
+  };
+  manual: { cantidad: number; totalCentavos: number };
 };
 
 type PedidosResponse = {
@@ -42,6 +61,14 @@ const STATUS_LABELS: Record<EstadoPedido, string> = {
   ENTREGADO: 'Entregado',
 };
 
+const PAGO_LABELS: Record<EstadoPago, string> = {
+  PENDIENTE: 'Pago pendiente',
+  APROBADO: 'Pagado',
+  RECHAZADO: 'Rechazado',
+  EXPIRADO: 'Expirado',
+  ANULADO: 'Anulado',
+};
+
 const formatoFecha = new Intl.DateTimeFormat('es-CO', { dateStyle: 'medium', timeStyle: 'short' });
 
 const especificaciones = (order: Pedido) =>
@@ -51,6 +78,14 @@ const especificaciones = (order: Pedido) =>
     order.tipoImpresion === 'BN' ? 'B/N' : 'Color',
     order.dobleCara ? 'Doble cara' : 'Una cara',
   ].join(' · ');
+
+const avisoPrecio = (order: Pedido) =>
+  order.telefono && order.precioCentavos
+    ? `https://wa.me/57${order.telefono}?text=${encodeURIComponent(
+        `Hola ${order.nombre}, el valor de tu pedido ${order.codigo} es ${formatoPesos(order.precioCentavos)}. ` +
+          `Puedes pagarlo con Nequi aquí: ${window.location.origin}/rastreo?codigo=${order.codigo}`,
+      )}`
+    : null;
 
 const avisoListo = (order: Pedido) =>
   order.telefono
@@ -75,6 +110,9 @@ function AdminDashboard() {
   const [error, setError] = useState(hasApi ? '' : 'Falta configurar VITE_API_URL.');
   const [downloadingKey, setDownloadingKey] = useState('');
   const [updatingId, setUpdatingId] = useState('');
+  const [paymentFilter, setPaymentFilter] = useState('');
+  const [precios, setPrecios] = useState<Record<string, string>>({});
+  const [resumen, setResumen] = useState<Resumen | null>(null);
 
   useEffect(() => {
     if (!hasApi) return undefined;
@@ -119,6 +157,7 @@ function AdminDashboard() {
     setError('');
     const params = new URLSearchParams({ page: String(page), limit: '10' });
     if (statusFilter) params.set('estado', statusFilter);
+    if (paymentFilter) params.set('estadoPago', paymentFilter);
     if (query) params.set('q', query);
     try {
       const response = await fetch(apiUrl(`/pedidos?${params}`), { credentials: 'include' });
@@ -138,11 +177,76 @@ function AdminDashboard() {
     } finally {
       setLoading(false);
     }
-  }, [navigate, page, statusFilter, query]);
+  }, [navigate, page, statusFilter, paymentFilter, query]);
 
   useEffect(() => {
     if (ready) void loadOrders();
   }, [loadOrders, ready]);
+
+  // El resumen es informativo: si falla, la lista de pedidos sigue funcionando
+  const fetchResumen = () =>
+    fetch(apiUrl('/pedidos/resumen'), { credentials: 'include' })
+      .then((response) => (response.ok ? (response.json() as Promise<Resumen>) : null))
+      .catch(() => null);
+
+  const loadResumen = useCallback(async () => {
+    const datos = await fetchResumen();
+    if (datos) setResumen(datos);
+  }, []);
+
+  useEffect(() => {
+    if (!ready) return undefined;
+    let activo = true;
+    void fetchResumen().then((datos) => {
+      if (activo && datos) setResumen(datos);
+    });
+    return () => {
+      activo = false;
+    };
+  }, [ready]);
+
+  /** PATCH sobre un pedido; reemplaza la fila con lo que devuelve el servidor. */
+  async function actualizarPedido(order: Pedido, ruta: string, body: unknown, fallback: string) {
+    setUpdatingId(order.id);
+    setError('');
+    try {
+      const response = await fetch(apiUrl(`/pedidos/${order.id}/${ruta}`), {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      if (response.status === 401) {
+        navigate('/admin/login', { replace: true });
+        return false;
+      }
+      if (!response.ok) throw new Error(await responseMessage(response, fallback));
+      const actualizado = (await response.json()) as Pedido;
+      setOrders((current) => current.map((item) => (item.id === order.id ? actualizado : item)));
+      void loadResumen();
+      return true;
+    } catch (patchError) {
+      setError(patchError instanceof Error ? patchError.message : fallback);
+      return false;
+    } finally {
+      setUpdatingId('');
+    }
+  }
+
+  async function guardarPrecio(order: Pedido) {
+    const valor = Number((precios[order.id] ?? '').replace(/\D/g, ''));
+    if (!Number.isInteger(valor) || valor < 100) {
+      setError('Escribe el precio en pesos, por ejemplo 2500.');
+      return;
+    }
+    const ok = await actualizarPedido(order, 'precio', { precio: valor }, 'No se pudo guardar el precio.');
+    if (ok) setPrecios((actuales) => ({ ...actuales, [order.id]: '' }));
+  }
+
+  function cambiarPagoManual(order: Pedido, pagado: boolean) {
+    if (pagado && !window.confirm(`¿Confirmas que el pedido ${order.codigo} ya está pagado?`)) return;
+    void actualizarPedido(order, 'pago-manual', { pagado }, 'No se pudo actualizar el pago.');
+  }
 
   async function changeStatus(order: Pedido, newStatus: EstadoPedido) {
     const oldStatus = order.estado;
@@ -243,6 +347,33 @@ function AdminDashboard() {
           </button>
         </header>
 
+        {resumen && (
+          <section className="admin-resumen" aria-label="Resumen del día">
+            <div>
+              <span>Pedidos hoy</span>
+              <strong>{resumen.pedidosRecibidos}</strong>
+              <small>
+                {resumen.porEstado.PENDIENTE ?? 0} pendientes · {resumen.porEstado.LISTO ?? 0} listos ·{' '}
+                {resumen.porEstado.ENTREGADO ?? 0} entregados
+              </small>
+            </div>
+            <div>
+              <span>Nequi (Wompi) hoy</span>
+              <strong>{formatoPesos(resumen.nequiWompi.totalCentavos)}</strong>
+              <small>
+                {resumen.nequiWompi.cantidad} pagos · comisión estimada{' '}
+                {formatoPesos(resumen.nequiWompi.comisionEstimadaCentavos)} · neto{' '}
+                {formatoPesos(resumen.nequiWompi.netoEstimadoCentavos)}
+              </small>
+            </div>
+            <div>
+              <span>Pagos confirmados a mano hoy</span>
+              <strong>{formatoPesos(resumen.manual.totalCentavos)}</strong>
+              <small>{resumen.manual.cantidad} pedidos (efectivo o transferencia verificada)</small>
+            </div>
+          </section>
+        )}
+
         <section className="admin-orders-card" aria-labelledby="orders-title">
           <div className="admin-orders-toolbar">
             <div>
@@ -258,6 +389,20 @@ function AdminDashboard() {
                   onChange={(event) => setSearch(event.target.value)}
                   placeholder="Código, nombre o teléfono"
                 />
+              </label>
+              <label className="admin-filter">
+                <span>Pago</span>
+                <select
+                  value={paymentFilter}
+                  onChange={(event) => {
+                    setPaymentFilter(event.target.value);
+                    setPage(1);
+                  }}
+                >
+                  <option value="">Todos</option>
+                  <option value="PENDIENTE">Pendiente</option>
+                  <option value="APROBADO">Pagado</option>
+                </select>
               </label>
               <label className="admin-filter">
                 <span>Estado</span>
@@ -333,6 +478,39 @@ function AdminDashboard() {
                         </td>
                         <td>
                           <strong>{order.metodoPago === 'NEQUI' ? 'Nequi' : 'Efectivo'}</strong>
+                          <span className={`admin-status admin-pago-${order.estadoPago.toLowerCase()}`}>
+                            {PAGO_LABELS[order.estadoPago]}
+                            {order.pagoManual ? ' (manual)' : ''}
+                          </span>
+                          <small>
+                            {order.precioCentavos ? formatoPesos(order.precioCentavos) : 'Sin precio'}
+                          </small>
+                          {order.pagos[0] && (
+                            <small>
+                              Último intento Nequi: {PAGO_LABELS[order.pagos[0].estado]}
+                              {order.pagos[0].wompiTransactionId ? ` · ${order.pagos[0].wompiTransactionId}` : ''}
+                            </small>
+                          )}
+                          {order.estadoPago !== 'APROBADO' && (
+                            <div className="admin-precio">
+                              <input
+                                inputMode="numeric"
+                                placeholder={order.precioCentavos ? 'Nuevo precio' : 'Precio en $'}
+                                aria-label={`Precio del pedido ${order.codigo}`}
+                                value={precios[order.id] ?? ''}
+                                onChange={(event) =>
+                                  setPrecios((actuales) => ({ ...actuales, [order.id]: event.target.value }))
+                                }
+                              />
+                              <button
+                                type="button"
+                                onClick={() => void guardarPrecio(order)}
+                                disabled={updatingId === order.id || !(precios[order.id] ?? '').trim()}
+                              >
+                                Guardar
+                              </button>
+                            </div>
+                          )}
                           {order.referenciaNequi && <small>Ref. {order.referenciaNequi}</small>}
                           {order.metodoPago === 'NEQUI' && !order.comprobanteNombre && (
                             <small>Sin comprobante</small>
@@ -376,6 +554,37 @@ function AdminDashboard() {
                                 </option>
                               ))}
                             </select>
+                            {order.estadoPago !== 'APROBADO' ? (
+                              <button
+                                className="admin-download-button admin-secondary-button"
+                                type="button"
+                                onClick={() => cambiarPagoManual(order, true)}
+                                disabled={updatingId === order.id}
+                              >
+                                Marcar pagado
+                              </button>
+                            ) : (
+                              order.pagoManual && (
+                                <button
+                                  className="admin-link-button"
+                                  type="button"
+                                  onClick={() => cambiarPagoManual(order, false)}
+                                  disabled={updatingId === order.id}
+                                >
+                                  Quitar pago manual
+                                </button>
+                              )
+                            )}
+                            {order.estadoPago !== 'APROBADO' && avisoPrecio(order) && (
+                              <a
+                                className="admin-whatsapp-link"
+                                href={avisoPrecio(order) ?? undefined}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                Enviar precio por WhatsApp
+                              </a>
+                            )}
                             {order.estado === 'LISTO' && aviso && (
                               <a className="admin-whatsapp-link" href={aviso} target="_blank" rel="noopener noreferrer">
                                 Avisar por WhatsApp

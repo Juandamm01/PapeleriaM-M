@@ -427,3 +427,108 @@
     width: 100%;
   }
 }
+
+/* Resumen del día y pagos */
+.admin-resumen {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.admin-resumen > div {
+  display: grid;
+  gap: 4px;
+  padding: 16px 18px;
+  border: 1px solid rgba(255, 27, 141, 0.12);
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 12px 30px rgba(80, 29, 57, 0.06);
+}
+
+.admin-resumen span {
+  color: #786f7a;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.admin-resumen strong {
+  font-size: 1.4rem;
+}
+
+.admin-resumen small {
+  color: #817985;
+  font-size: 0.8rem;
+}
+
+.admin-pago-pendiente {
+  margin: 4px 0;
+  color: #966000;
+  background: #fff2c7;
+}
+
+.admin-pago-aprobado {
+  margin: 4px 0;
+  color: #277348;
+  background: #e1f7e9;
+}
+
+.admin-pago-rechazado,
+.admin-pago-expirado,
+.admin-pago-anulado {
+  margin: 4px 0;
+  color: #a20d57;
+  background: #ffe6f2;
+}
+
+.admin-precio {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.admin-precio input {
+  width: 110px;
+  padding: 7px 9px;
+  border: 1px solid #e9dfe7;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 0.82rem;
+}
+
+.admin-precio button {
+  padding: 7px 10px;
+  border: 0;
+  border-radius: 10px;
+  background: #1bc5ff;
+  color: #fff;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.admin-precio button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.admin-link-button {
+  padding: 4px;
+  border: 0;
+  background: none;
+  color: #716a74;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+@media (max-width: 900px) {
+  .admin-resumen {
+    grid-template-columns: 1fr;
+  }
+}
