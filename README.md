@@ -105,3 +105,21 @@ bun run dev
 
 El panel está en `/admin/login`. Para cambiar la URL de la API del frontend,
 configura `VITE_API_URL` en `Frontend/.env`.
+
+## Pagos con Nequi (Wompi)
+
+El cliente paga desde `/rastreo` cuando el administrador ya fijó el precio del pedido.
+Recibe una notificación en su app Nequi, la aprueba y el pedido queda pagado
+automáticamente. El monto siempre sale del pedido guardado en la base.
+
+1. Crea la cuenta en Wompi y copia las llaves de **sandbox** en `Backend/.env`
+   (`WOMPI_PUBLIC_KEY`, `WOMPI_PRIVATE_KEY`, `WOMPI_INTEGRITY_SECRET`,
+   `WOMPI_EVENTS_SECRET`). Nunca las subas a git.
+2. En el panel de Wompi configura la URL de eventos:
+   `https://<tu-api>/pagos/webhook` (una para sandbox y otra para producción).
+3. Prueba en sandbox con estos celulares: `3991111111` (aprobado),
+   `3992222222` (rechazado) y cualquier otro (error).
+4. Pruebas de las firmas: `cd Backend && bun run test`.
+
+Si las llaves no están configuradas, la página de rastreo indica que el pago en
+línea no está disponible y el pedido se paga en el local.
