@@ -21,6 +21,12 @@ import { LoginDto } from './dto/login.dto';
 const COOKIE_NAME = 'admin_token';
 const SESSION_DURATION_MS = 8 * 60 * 60 * 1000;
 
+// Hash de una contraseña aleatoria: se verifica contra él cuando el correo no existe,
+// para que la respuesta tarde lo mismo y no revele qué correos están registrados.
+let hashSenuelo: Promise<string> | undefined;
+const obtenerHashSenuelo = () =>
+  (hashSenuelo ??= argon2.hash(`senuelo-${Math.random()}-${Date.now()}`));
+
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -39,7 +45,9 @@ export class AuthController {
     const admin = await this.prisma.admin.findUnique({
       where: { email: loginDto.email },
     });
-    if (!admin || !(await argon2.verify(admin.passwordHash, loginDto.password))) {
+    const hash = admin?.passwordHash ?? (await obtenerHashSenuelo());
+    const valida = await argon2.verify(hash, loginDto.password);
+    if (!admin || !valida) {
       throw new UnauthorizedException('Credenciales inválidas');
     }
 
