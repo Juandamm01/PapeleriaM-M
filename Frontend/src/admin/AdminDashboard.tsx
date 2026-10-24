@@ -24,6 +24,7 @@ type Pedido = {
   referenciaNequi: string | null;
   comprobanteNombre: string | null;
   estado: EstadoPedido;
+  archivosEliminadosAt: string | null;
   createdAt: string;
 };
 
@@ -324,6 +325,11 @@ function AdminDashboard() {
                         <td>
                           <strong>{especificaciones(order)}</strong>
                           <span className="admin-file-name">{order.archivoNombre}</span>
+                          {order.archivosEliminadosAt && (
+                            <small>
+                              Archivos borrados el {formatoFecha.format(new Date(order.archivosEliminadosAt))}
+                            </small>
+                          )}
                         </td>
                         <td>
                           <strong>{order.metodoPago === 'NEQUI' ? 'Nequi' : 'Efectivo'}</strong>
@@ -343,11 +349,12 @@ function AdminDashboard() {
                               className="admin-download-button"
                               type="button"
                               onClick={() => void download(order, 'archivo')}
-                              disabled={downloadingKey === `${order.id}:archivo`}
+                              disabled={Boolean(order.archivosEliminadosAt) || downloadingKey === `${order.id}:archivo`}
+                              title={order.archivosEliminadosAt ? 'El archivo ya se borró por la política de retención' : undefined}
                             >
                               {downloadingKey === `${order.id}:archivo` ? 'Descargando…' : 'Descargar archivo'}
                             </button>
-                            {order.comprobanteNombre && (
+                            {order.comprobanteNombre && !order.archivosEliminadosAt && (
                               <button
                                 className="admin-download-button admin-secondary-button"
                                 type="button"
