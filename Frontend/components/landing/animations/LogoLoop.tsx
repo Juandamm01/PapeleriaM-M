@@ -63,14 +63,14 @@ export const LogoLoop: React.FC<LogoLoopProps> = ({
       >
         <div className="logoloop__list">
           {children.map((child, i) => (
-            <div key={`loop-${i}`} className="logoloop__item snap-start">
+            <div key={`loop-${i}`} className="logoloop__item">
               <div className="logoloop__node">{child}</div>
             </div>
           ))}
         </div>
         <div className="logoloop__list" aria-hidden="true">
           {children.map((child, i) => (
-            <div key={`loop-copy-${i}`} className="logoloop__item snap-start">
+            <div key={`loop-copy-${i}`} className="logoloop__item">
               <div className="logoloop__node">{child}</div>
             </div>
           ))}

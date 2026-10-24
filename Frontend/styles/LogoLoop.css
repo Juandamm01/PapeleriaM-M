@@ -65,7 +65,8 @@
 .logoloop__node {
   display: inline-flex;
   align-items: center;
-  width: 100%;
+  /* Ancho según su contenido: un % aquí sería circular porque el ítem es flex: 0 0 auto */
+  width: auto;
   height: 100%;
 }
 

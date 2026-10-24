@@ -44,7 +44,7 @@ const serviciosData = [
 
 const Servicios: React.FC = () => {
   const serviceCards = serviciosData.map((servicio) => (
-    <div className="servicio-card snap-start flex-shrink-0" key={servicio.id}>
+    <div className="servicio-card flex-shrink-0" key={servicio.id}>
       <div className="servicio-icon">
         {servicio.icon}
       </div>
