@@ -1,5 +1,6 @@
 import { Transform, Type } from 'class-transformer';
 import {
+  Equals,
   IsBoolean,
   IsEmail,
   IsEnum,
@@ -64,6 +65,11 @@ export class CreatePedidoDto {
 
   @IsEnum(MetodoPago, { message: 'Elige un método de pago.' })
   metodoPago!: MetodoPago;
+
+  // Ley 1581 de 2012: autorización previa, expresa e informada
+  @Transform(({ value }) => value === true || value === 'true')
+  @Equals(true, { message: 'Debes aceptar la política de tratamiento de datos personales.' })
+  aceptaPolitica!: boolean;
 
   @Transform(textoOpcional)
   @IsOptional()

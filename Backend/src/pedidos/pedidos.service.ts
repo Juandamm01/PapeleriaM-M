@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { GoneException, Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { randomInt, randomUUID } from 'crypto';
 import { mkdir, realpath, rm, stat, writeFile } from 'fs/promises';
@@ -30,6 +30,9 @@ const camposAdmin = {
   referenciaNequi: true,
   comprobanteNombre: true,
   estado: true,
+  consentimientoAt: true,
+  entregadoAt: true,
+  archivosEliminadosAt: true,
   createdAt: true,
 } satisfies Prisma.PedidoSelect;
 
@@ -71,6 +74,9 @@ export class PedidosService {
       ? `${randomUUID()}-comprobante${extname(comprobante.originalname).toLowerCase()}`
       : undefined;
     const escritos: string[] = [];
+    // aceptaPolitica no es una columna: se guarda como la fecha del consentimiento
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { aceptaPolitica, ...datos } = dto;
 
     try {
       await writeFile(join(uploads, archivoRuta), archivo.buffer);
@@ -84,7 +90,8 @@ export class PedidosService {
         try {
           return await this.prisma.pedido.create({
             data: {
-              ...dto,
+              ...datos,
+              consentimientoAt: new Date(),
               codigo: generarCodigo(),
               archivoNombre: archivo.originalname,
               archivoRuta,
@@ -166,8 +173,11 @@ export class PedidosService {
     try {
       return await this.prisma.pedido.update({
         where: { id },
-        data: { estado: dto.estado },
-        select: { id: true, estado: true },
+        data: {
+          estado: dto.estado,
+          entregadoAt: dto.estado === 'ENTREGADO' ? new Date() : null,
+        },
+        select: { id: true, estado: true, entregadoAt: true },
       });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
@@ -187,10 +197,16 @@ export class PedidosService {
         comprobanteRuta: true,
         comprobanteNombre: true,
         comprobanteTipo: true,
+        archivosEliminadosAt: true,
       },
     });
     if (!pedido) {
       throw new NotFoundException('Pedido no encontrado');
+    }
+    if (pedido.archivosEliminadosAt) {
+      throw new GoneException(
+        'Los archivos de este pedido se eliminaron por la política de retención.',
+      );
     }
     const ruta = campo === 'archivo' ? pedido.archivoRuta : pedido.comprobanteRuta;
     const nombre = campo === 'archivo' ? pedido.archivoNombre : pedido.comprobanteNombre;

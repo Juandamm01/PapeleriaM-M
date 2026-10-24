@@ -8,28 +8,35 @@ datasource db {
 }
 
 model Pedido {
-  id                String        @id @default(uuid())
-  codigo            String        @unique
-  nombre            String
-  correo            String
-  telefono          String?
-  notas             String?
-  archivoNombre     String
-  archivoRuta       String
-  tipoArchivo       String
-  copias            Int           @default(1)
-  tamano            TamanoPapel   @default(CARTA)
-  tipoImpresion     TipoImpresion @default(BN)
-  dobleCara         Boolean       @default(false)
-  metodoPago        MetodoPago
-  referenciaNequi   String?
-  comprobanteNombre String?
-  comprobanteRuta   String?
-  comprobanteTipo   String?
-  estado            EstadoPedido  @default(PENDIENTE)
-  createdAt         DateTime      @default(now())
+  id                   String        @id @default(uuid())
+  codigo               String        @unique
+  nombre               String
+  correo               String
+  telefono             String?
+  notas                String?
+  archivoNombre        String
+  archivoRuta          String
+  tipoArchivo          String
+  copias               Int           @default(1)
+  tamano               TamanoPapel   @default(CARTA)
+  tipoImpresion        TipoImpresion @default(BN)
+  dobleCara            Boolean       @default(false)
+  metodoPago           MetodoPago
+  referenciaNequi      String?
+  comprobanteNombre    String?
+  comprobanteRuta      String?
+  comprobanteTipo      String?
+  estado               EstadoPedido  @default(PENDIENTE)
+  /// Momento en que el cliente aceptó la política de tratamiento de datos (Ley 1581)
+  consentimientoAt     DateTime?
+  /// Se fija al pasar a ENTREGADO; cuenta los días de retención de los archivos
+  entregadoAt          DateTime?
+  /// Cuándo se borraron del disco el archivo y el comprobante por retención
+  archivosEliminadosAt DateTime?
+  createdAt            DateTime      @default(now())
 
   @@index([estado, createdAt])
+  @@index([archivosEliminadosAt, createdAt])
 }
 
 model Admin {
