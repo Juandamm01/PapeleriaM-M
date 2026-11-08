@@ -1,8 +1,27 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { apiUrl, formatoPesos, hasApi, responseMessage } from '../api';
 import { useNoIndexMeta } from './useNoIndexMeta';
+import AdminConfiguracion from './AdminConfiguracion';
+import AdminDigitacion from './AdminDigitacion';
+import { descargarProtegido } from './descargar';
 import './admin.css';
+
+type Pestana = 'pedidos' | 'digitacion' | 'configuracion';
+const PESTANAS: { id: Pestana; titulo: string }[] = [
+  { id: 'pedidos', titulo: 'Pedidos' },
+  { id: 'digitacion', titulo: 'Digitación' },
+  { id: 'configuracion', titulo: 'Configuración' },
+];
+
+type EstadoNotificacion = 'PENDIENTE' | 'ENVIANDO' | 'ENVIADA' | 'FALLIDA' | 'OMITIDA';
+const NOTIFICACION_LABELS: Record<EstadoNotificacion, string> = {
+  PENDIENTE: 'Aviso pendiente',
+  ENVIANDO: 'Enviando aviso…',
+  ENVIADA: 'Aviso enviado por WhatsApp',
+  FALLIDA: 'El aviso falló',
+  OMITIDA: 'Aviso no enviado',
+};
 
 type EstadoPedido = 'PENDIENTE' | 'LISTO' | 'ENTREGADO';
 type EstadoPago = 'PENDIENTE' | 'APROBADO' | 'RECHAZADO' | 'EXPIRADO' | 'ANULADO';
@@ -19,8 +38,18 @@ type Pedido = {
   tipoArchivo: string;
   copias: number;
   tamano: 'CARTA' | 'OFICIO';
-  tipoImpresion: 'BN' | 'COLOR';
+  tipoImpresion: 'BN' | 'COLOR' | 'MIXTO';
   dobleCara: boolean;
+  paginasDocumento: number | null;
+  paginasSeleccion: string | null;
+  paginasImprimir: number | null;
+  paginasColor: string | null;
+  notasPaginas: { paginas: string; nota: string }[] | null;
+  precioAutomatico: boolean;
+  recogidaInicio: string | null;
+  recogidaFin: string | null;
+  whatsappAutorizado: boolean;
+  notificaciones: { tipo: string; estado: EstadoNotificacion; detalle: string | null; intentos: number; enviadaAt: string | null }[];
   metodoPago: 'NEQUI' | 'EFECTIVO';
   referenciaNequi: string | null;
   comprobanteNombre: string | null;
@@ -75,7 +104,7 @@ const especificaciones = (order: Pedido) =>
   [
     `${order.copias} ${order.copias === 1 ? 'copia' : 'copias'}`,
     order.tamano === 'CARTA' ? 'Carta' : 'Oficio',
-    order.tipoImpresion === 'BN' ? 'B/N' : 'Color',
+    order.tipoImpresion === 'BN' ? 'B/N' : order.tipoImpresion === 'COLOR' ? 'Color' : 'Mixto',
     order.dobleCara ? 'Doble cara' : 'Una cara',
   ].join(' · ');
 
@@ -94,9 +123,25 @@ const avisoListo = (order: Pedido) =>
       )}`
     : null;
 
+const formatoHora = new Intl.DateTimeFormat('es-CO', { weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'America/Bogota' });
+const formatoSoloHora = new Intl.DateTimeFormat('es-CO', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Bogota' });
+
+const detallePaginas = (order: Pedido) => {
+  if (order.paginasImprimir && order.paginasDocumento) {
+    const seleccion = order.paginasSeleccion && order.paginasImprimir !== order.paginasDocumento ? ` (${order.paginasSeleccion})` : '';
+    return `${order.paginasImprimir} de ${order.paginasDocumento} págs.${seleccion}`;
+  }
+  return order.paginasSeleccion ? `Páginas: ${order.paginasSeleccion}` : null;
+};
+
 function AdminDashboard() {
   useNoIndexMeta();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const pestanaUrl = searchParams.get('tab');
+  const pestana: Pestana = pestanaUrl === 'digitacion' || pestanaUrl === 'configuracion' ? pestanaUrl : 'pedidos';
+  const cambiarPestana = (id: Pestana) => setSearchParams(id === 'pedidos' ? {} : { tab: id }, { replace: true });
+  const sesionVencida = useCallback(() => navigate('/admin/login', { replace: true }), [navigate]);
   const [adminEmail, setAdminEmail] = useState('');
   const [ready, setReady] = useState(false);
   const [orders, setOrders] = useState<Pedido[]>([]);
@@ -180,7 +225,15 @@ function AdminDashboard() {
   }, [navigate, page, statusFilter, paymentFilter, query]);
 
   useEffect(() => {
-    if (ready) void loadOrders();
+    let active = true;
+    if (ready) {
+      Promise.resolve().then(() => {
+        if (active) void loadOrders();
+      });
+    }
+    return () => {
+      active = false;
+    };
   }, [loadOrders, ready]);
 
   // El resumen es informativo: si falla, la lista de pedidos sigue funcionando
@@ -310,6 +363,32 @@ function AdminDashboard() {
     }
   }
 
+  async function descargarRecibo(order: Pedido) {
+    setError('');
+    try {
+      const r = await descargarProtegido(`/pedidos/${order.id}/recibo`, `recibo-${order.codigo}.pdf`);
+      if (r === 'sesion') sesionVencida();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'No se pudo descargar el recibo.');
+    }
+  }
+
+  async function reintentarAviso(order: Pedido) {
+    setUpdatingId(order.id);
+    setError('');
+    try {
+      const response = await fetch(apiUrl(`/pedidos/${order.id}/aviso/reintentar`), { method: 'POST', credentials: 'include' });
+      if (response.status === 401) return sesionVencida();
+      if (!response.ok) throw new Error(await responseMessage(response, 'No se pudo reintentar el aviso.'));
+      const actualizado = (await response.json()) as Pedido;
+      setOrders((current) => current.map((item) => (item.id === order.id ? actualizado : item)));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'No se pudo reintentar el aviso.');
+    } finally {
+      setUpdatingId('');
+    }
+  }
+
   async function logout() {
     try {
       const response = await fetch(apiUrl('/auth/logout'), { method: 'POST', credentials: 'include' });
@@ -339,7 +418,7 @@ function AdminDashboard() {
         <header className="admin-header">
           <div>
             <span className="admin-eyebrow">Papelería M&amp;M</span>
-            <h1>Gestión de pedidos</h1>
+            <h1>Panel de administración</h1>
             <p>{adminEmail}</p>
           </div>
           <button className="admin-logout-button" type="button" onClick={logout}>
@@ -347,7 +426,24 @@ function AdminDashboard() {
           </button>
         </header>
 
-        {resumen && (
+        <nav className="admin-tabs" aria-label="Secciones del panel">
+          {PESTANAS.map((p) => (
+            <button
+              key={p.id}
+              type="button"
+              className={pestana === p.id ? 'is-activa' : ''}
+              aria-current={pestana === p.id ? 'page' : undefined}
+              onClick={() => cambiarPestana(p.id)}
+            >
+              {p.titulo}
+            </button>
+          ))}
+        </nav>
+
+        {pestana === 'digitacion' && ready && <AdminDigitacion onSesionVencida={sesionVencida} />}
+        {pestana === 'configuracion' && ready && <AdminConfiguracion onSesionVencida={sesionVencida} />}
+
+        {pestana === 'pedidos' && resumen && (
           <section className="admin-resumen" aria-label="Resumen del día">
             <div>
               <span>Pedidos hoy</span>
@@ -374,6 +470,7 @@ function AdminDashboard() {
           </section>
         )}
 
+        {pestana === 'pedidos' && (
         <section className="admin-orders-card" aria-labelledby="orders-title">
           <div className="admin-orders-toolbar">
             <div>
@@ -470,6 +567,26 @@ function AdminDashboard() {
                         <td>
                           <strong>{especificaciones(order)}</strong>
                           <span className="admin-file-name">{order.archivoNombre}</span>
+                          {detallePaginas(order) && <small>{detallePaginas(order)}</small>}
+                          {order.tipoImpresion === 'MIXTO' && order.paginasColor && <small>Color: {order.paginasColor}</small>}
+                          {order.notasPaginas && order.notasPaginas.length > 0 && (
+                            <details className="admin-notes">
+                              <summary>Indicaciones por página ({order.notasPaginas.length})</summary>
+                              <ul className="admin-notas-pagina">
+                                {order.notasPaginas.map((n, i) => (
+                                  <li key={i}>
+                                    <strong>Pág. {n.paginas}:</strong> {n.nota}
+                                  </li>
+                                ))}
+                              </ul>
+                            </details>
+                          )}
+                          {order.recogidaInicio && (
+                            <small className="admin-recogida">
+                              Recoge: {formatoHora.format(new Date(order.recogidaInicio))}
+                              {order.recogidaFin ? ` – ${formatoSoloHora.format(new Date(order.recogidaFin))}` : ''}
+                            </small>
+                          )}
                           {order.archivosEliminadosAt && (
                             <small>
                               Archivos borrados el {formatoFecha.format(new Date(order.archivosEliminadosAt))}
@@ -484,6 +601,7 @@ function AdminDashboard() {
                           </span>
                           <small>
                             {order.precioCentavos ? formatoPesos(order.precioCentavos) : 'Sin precio'}
+                            {order.precioCentavos && order.precioAutomatico ? ' · calculado con tarifas' : ''}
                           </small>
                           {order.pagos[0] && (
                             <small>
@@ -520,6 +638,14 @@ function AdminDashboard() {
                           <span className={`admin-status admin-status-${order.estado.toLowerCase()}`}>
                             {STATUS_LABELS[order.estado]}
                           </span>
+                          {order.notificaciones?.map((n) => (
+                            <small key={n.tipo} className={`admin-aviso admin-aviso-${n.estado.toLowerCase()}`} title={n.detalle ?? undefined}>
+                              {NOTIFICACION_LABELS[n.estado]}
+                              {n.estado === 'FALLIDA' && n.intentos > 0 ? ` (${n.intentos} intentos)` : ''}
+                              {n.detalle && n.estado !== 'ENVIADA' ? ` · ${n.detalle}` : ''}
+                            </small>
+                          ))}
+                          {!order.whatsappAutorizado && order.estado !== 'ENTREGADO' && <small>Sin aviso automático</small>}
                         </td>
                         <td>
                           <div className="admin-actions">
@@ -554,6 +680,25 @@ function AdminDashboard() {
                                 </option>
                               ))}
                             </select>
+                            {order.estadoPago === 'APROBADO' && order.precioCentavos && (
+                              <button
+                                className="admin-download-button admin-secondary-button"
+                                type="button"
+                                onClick={() => void descargarRecibo(order)}
+                              >
+                                Recibo PDF
+                              </button>
+                            )}
+                            {order.notificaciones?.some((n) => n.estado === 'FALLIDA') && (
+                              <button
+                                className="admin-download-button admin-secondary-button"
+                                type="button"
+                                onClick={() => void reintentarAviso(order)}
+                                disabled={updatingId === order.id}
+                              >
+                                Reintentar aviso
+                              </button>
+                            )}
                             {order.estadoPago !== 'APROBADO' ? (
                               <button
                                 className="admin-download-button admin-secondary-button"
@@ -619,6 +764,7 @@ function AdminDashboard() {
             </button>
           </nav>
         </section>
+        )}
       </div>
     </main>
   );

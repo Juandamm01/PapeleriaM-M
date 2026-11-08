@@ -1,11 +1,10 @@
 .admin-page {
   width: 100%;
-  height: 100vh;
-  overflow-y: auto;
-  overflow-x: hidden;
+  min-height: 100vh;
+  min-height: 100svh;
   padding: 32px 20px;
   color: #26212a;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: var(--font-primary);
   background:
     radial-gradient(circle at 12% 8%, rgba(27, 197, 255, 0.11), transparent 30%),
     radial-gradient(circle at 90% 92%, rgba(255, 27, 141, 0.1), transparent 35%),
@@ -530,5 +529,242 @@
 @media (max-width: 900px) {
   .admin-resumen {
     grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Pestañas del panel ---------- */
+.admin-tabs {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 5px;
+  margin-bottom: 20px;
+  border-radius: 16px;
+  background: #fff;
+  border: 1px solid rgba(255, 27, 141, 0.12);
+}
+
+.admin-tabs button {
+  min-height: 42px;
+  padding: 9px 18px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: #5a535e;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.admin-tabs button.is-activa {
+  background: #ff1b8d;
+  color: #fff;
+}
+
+.admin-ok {
+  color: #0f7a54;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.admin-recogida {
+  color: #0b8fbf !important;
+  font-weight: 700;
+}
+
+.admin-notas-pagina {
+  margin: 6px 0 0;
+  padding-left: 16px;
+  font-size: 0.85rem;
+}
+
+.admin-aviso {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.78rem;
+}
+
+.admin-aviso-enviada { color: #0f7a54; }
+.admin-aviso-fallida { color: #b42358; font-weight: 700; }
+.admin-aviso-omitida { color: #817985; }
+
+/* ---------- Digitación ---------- */
+.admin-dg-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.admin-dg-item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px 24px;
+  border-bottom: 1px solid #f3eaf0;
+}
+
+.admin-dg-cabecera,
+.admin-dg-cuerpo {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px 24px;
+}
+
+.admin-dg-cabecera > div,
+.admin-dg-cuerpo > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.admin-dg-cuerpo small,
+.admin-dg-cabecera small {
+  color: #817985;
+}
+
+.admin-dg-descripcion {
+  white-space: pre-wrap;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #faf6f9;
+  font-size: 0.92rem;
+}
+
+.admin-dg-obs {
+  font-size: 0.88rem;
+  color: #5a535e;
+}
+
+.admin-dg-archivos,
+.admin-dg-estados {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.admin-dg-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.admin-dg-acciones .admin-filter,
+.admin-config .admin-filter {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+}
+
+.admin-dg-acciones input,
+.admin-config input:not([type='checkbox']) {
+  min-width: 0;
+  padding: 9px 11px;
+  border: 1px solid #e9dfe7;
+  border-radius: 12px;
+  font: inherit;
+}
+
+.admin-dg-nota {
+  flex: 1 1 240px;
+}
+
+.admin-dg-recibido,
+.admin-dg-en_revision { background: #fff4dd; color: #8a5a00; }
+.admin-dg-cotizado { background: #e6f7ff; color: #0b6f99; }
+.admin-dg-aceptado { background: #ffe6f2; color: #a20d57; }
+.admin-dg-finalizado { background: #e3f6ee; color: #0f7a54; }
+.admin-dg-cancelado { background: #f1eef2; color: #6a636d; }
+
+/* ---------- Configuración ---------- */
+.admin-config {
+  display: grid;
+  gap: 18px;
+}
+
+.admin-config > .admin-banner {
+  margin: 0;
+}
+
+.admin-config-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 22px 24px;
+}
+
+.admin-config-card h2 {
+  font-size: 1.15rem;
+}
+
+.admin-config-card h3 {
+  font-size: 1rem;
+  margin-top: 4px;
+}
+
+.admin-config-card .admin-primary-button {
+  align-self: flex-start;
+}
+
+.admin-config-ayuda {
+  color: #817985;
+  font-size: 0.9rem;
+}
+
+.admin-config-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 12px;
+}
+
+.admin-config-fila {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.admin-config-agregar {
+  align-self: flex-start;
+}
+
+.admin-config-dias {
+  display: grid;
+  gap: 8px;
+}
+
+.admin-config-dia {
+  display: grid;
+  grid-template-columns: 150px repeat(2, minmax(0, 140px));
+  gap: 10px;
+  align-items: center;
+}
+
+.admin-config-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+}
+
+.admin-config-check input {
+  width: 18px;
+  height: 18px;
+  accent-color: #ff1b8d;
+}
+
+@media (max-width: 520px) {
+  .admin-config-dia {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .admin-config-check {
+    grid-column: 1 / -1;
+  }
+
+  .admin-dg-item {
+    padding: 16px;
   }
 }
