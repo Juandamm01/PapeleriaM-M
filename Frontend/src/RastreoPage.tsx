@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2, Clock, LoaderCircle, PackageCheck, Search } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Clock, Download, LoaderCircle, PackageCheck, Search } from 'lucide-react';
 import { apiUrl, formatoPesos, hasApi, responseMessage, whatsappLink } from './api';
 import PagoNequi from './PagoNequi';
 import '../styles/Rastreo.css';
@@ -12,8 +12,12 @@ type PedidoRastreo = {
   estado: EstadoPedido;
   copias: number;
   tamano: 'CARTA' | 'OFICIO';
-  tipoImpresion: 'BN' | 'COLOR';
+  tipoImpresion: 'BN' | 'COLOR' | 'MIXTO';
   dobleCara: boolean;
+  paginasImprimir?: number | null;
+  paginasSeleccion?: string | null;
+  recogidaInicio?: string | null;
+  recogidaFin?: string | null;
   metodoPago: 'NEQUI' | 'EFECTIVO';
   precioCentavos: number | null;
   estadoPago: 'PENDIENTE' | 'APROBADO' | 'RECHAZADO' | 'EXPIRADO' | 'ANULADO';
@@ -28,6 +32,8 @@ const PASOS: { estado: EstadoPedido; titulo: string; detalle: string; Icono: typ
 
 const FORMATO_CODIGO = /^MM-[A-Z0-9]{6}$/;
 const formatoFecha = new Intl.DateTimeFormat('es-CO', { dateStyle: 'long', timeStyle: 'short' });
+const formatoRecogida = new Intl.DateTimeFormat('es-CO', { weekday: 'long', day: 'numeric', month: 'long', hour: 'numeric', minute: '2-digit', timeZone: 'America/Bogota' });
+const formatoHora = new Intl.DateTimeFormat('es-CO', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Bogota' });
 
 const normalizar = (valor: string) => {
   const limpio = valor.trim().toUpperCase().replace(/\s+/g, '');
@@ -162,9 +168,16 @@ function RastreoPage() {
                     <span>
                       {pedido.copias} {pedido.copias === 1 ? 'copia' : 'copias'} ·{' '}
                       {pedido.tamano === 'CARTA' ? 'Carta' : 'Oficio'} ·{' '}
-                      {pedido.tipoImpresion === 'BN' ? 'Blanco y negro' : 'Color'} ·{' '}
+                      {pedido.tipoImpresion === 'BN' ? 'Blanco y negro' : pedido.tipoImpresion === 'COLOR' ? 'Color' : 'Mixto'} ·{' '}
                       {pedido.dobleCara ? 'Doble cara' : 'Una cara'}
+                      {pedido.paginasImprimir ? ` · ${pedido.paginasImprimir} ${pedido.paginasImprimir === 1 ? 'página' : 'páginas'}` : ''}
                     </span>
+                    {pedido.recogidaInicio && (
+                      <span className="rastreo-recogida">
+                        Recogida: {formatoRecogida.format(new Date(pedido.recogidaInicio))}
+                        {pedido.recogidaFin ? ` – ${formatoHora.format(new Date(pedido.recogidaFin))}` : ''}
+                      </span>
+                    )}
                   </div>
 
                   <ol className="rastreo-pasos">
@@ -186,10 +199,22 @@ function RastreoPage() {
                   </ol>
 
                   {pedido.estadoPago === 'APROBADO' ? (
-                    <p className="rastreo-pagado">
-                      Pago recibido
-                      {pedido.precioCentavos ? ` · ${formatoPesos(pedido.precioCentavos)}` : ''}
-                    </p>
+                    <div className="rastreo-pagado">
+                      <span>
+                        Pago recibido
+                        {pedido.precioCentavos ? ` · ${formatoPesos(pedido.precioCentavos)}` : ''}
+                      </span>
+                      {pedido.precioCentavos ? (
+                        <a
+                          className="rastreo-recibo"
+                          href={apiUrl(`/pedidos/recibo/${encodeURIComponent(pedido.codigo)}`)}
+                          download={`recibo-${pedido.codigo}.pdf`}
+                        >
+                          <Download size={16} aria-hidden="true" />
+                          Descargar recibo
+                        </a>
+                      ) : null}
+                    </div>
                   ) : pedido.precioCentavos ? (
                     <PagoNequi
                       codigo={pedido.codigo}

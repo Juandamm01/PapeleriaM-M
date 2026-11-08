@@ -1,8 +1,7 @@
-/* La landing deja html/body/#root con overflow: hidden; esta página maneja su propio scroll */
+/* El documento hace el scroll (sin contenedores anidados) */
 .rastreo-page {
-  height: 100vh;
-  overflow-y: auto;
-  overflow-x: hidden;
+  min-height: 100vh;
+  min-height: 100svh;
   padding: 32px 16px 48px;
   background-color: #f9fbfe;
   background-image:
@@ -244,7 +243,35 @@
   }
 }
 
+.rastreo-recogida {
+  color: #0b8fbf;
+  font-weight: 700;
+}
+
+.rastreo-recibo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #1d7a45;
+  font-weight: 800;
+  text-decoration: none;
+  border: 1.5px solid rgba(37, 211, 102, 0.4);
+}
+
+.rastreo-recibo:hover {
+  background: #f2fff7;
+}
+
 .rastreo-pagado {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
   margin-top: 18px;
   padding: 12px 14px;
   border-radius: 16px;

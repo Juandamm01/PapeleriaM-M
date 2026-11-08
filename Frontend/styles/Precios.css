@@ -1,0 +1,819 @@
+/* ==========================================================================
+   REDISEÑO VISUAL PREMIUM — PÁGINA /PRECIOS | PAPELERÍA M&M
+   ========================================================================== */
+
+:root {
+  --precios-rosa: #FF1B8D;
+  --precios-rosa-rgb: 255, 27, 141;
+  --precios-cian: #1BC5FF;
+  --precios-cian-rgb: 27, 197, 255;
+  --precios-fondo: #f9fbfe;
+  --precios-card-bg: rgba(255, 255, 255, 0.94);
+  --precios-card-border: rgba(15, 34, 58, 0.08);
+  --precios-text-title: #141a29;
+  --precios-text-body: #4b5568;
+  --precios-text-muted: #718096;
+  --precios-shadow-sm: 0 4px 12px rgba(15, 34, 58, 0.04);
+  --precios-shadow-md: 0 14px 34px -8px rgba(15, 34, 58, 0.08), 0 2px 6px -1px rgba(15, 34, 58, 0.03);
+  --precios-shadow-hover: 0 22px 45px -10px rgba(15, 34, 58, 0.12), 0 4px 12px -2px rgba(15, 34, 58, 0.04);
+  --precios-radius-sm: 12px;
+  --precios-radius-md: 20px;
+  --precios-radius-lg: 26px;
+  --precios-transition: 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* --------------------------------------------------------------------------
+   Contenedor principal con ambientación de marca
+   -------------------------------------------------------------------------- */
+.precios-page {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: 32px 20px 80px;
+  background-color: var(--precios-fondo);
+  background-image:
+    linear-gradient(var(--grid-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+  background-size: 32px 32px;
+  overflow-x: clip;
+}
+
+/* Halos de luz ambientales sutiles (rosa y cian) sobre la cuadrícula */
+.precios-ambient {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.precios-ambient__glow {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(80px);
+  opacity: 0.45;
+  will-change: transform;
+}
+
+.precios-ambient__glow--cian {
+  top: -80px;
+  right: -60px;
+  width: 480px;
+  height: 480px;
+  background: radial-gradient(circle, rgba(var(--precios-cian-rgb), 0.22) 0%, rgba(var(--precios-cian-rgb), 0.03) 65%, transparent 75%);
+}
+
+.precios-ambient__glow--rosa {
+  top: 380px;
+  left: -100px;
+  width: 520px;
+  height: 520px;
+  background: radial-gradient(circle, rgba(var(--precios-rosa-rgb), 0.16) 0%, rgba(var(--precios-rosa-rgb), 0.02) 65%, transparent 75%);
+}
+
+.precios-ambient__glow--bottom {
+  bottom: -60px;
+  right: 10%;
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle, rgba(var(--precios-cian-rgb), 0.14) 0%, transparent 70%);
+}
+
+/* Contenedor centrado y estructurado */
+.precios-contenedor {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 880px);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* --------------------------------------------------------------------------
+   Botón de retorno: "Volver al inicio"
+   -------------------------------------------------------------------------- */
+.precios-volver {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 6px 16px 6px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(var(--precios-rosa-rgb), 0.15);
+  color: var(--precios-rosa);
+  font-family: var(--font-primary);
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: var(--precios-shadow-sm);
+  transition: transform var(--precios-transition), background-color var(--precios-transition), border-color var(--precios-transition), box-shadow var(--precios-transition);
+}
+
+.precios-volver svg {
+  transition: transform var(--precios-transition);
+}
+
+.precios-volver:hover {
+  background: #ffffff;
+  border-color: rgba(var(--precios-rosa-rgb), 0.35);
+  transform: translateX(-2px);
+  box-shadow: 0 6px 18px rgba(var(--precios-rosa-rgb), 0.12);
+}
+
+.precios-volver:hover svg {
+  transform: translateX(-3px);
+}
+
+.precios-volver:active {
+  transform: scale(0.98);
+}
+
+/* --------------------------------------------------------------------------
+   Encabezado principal
+   -------------------------------------------------------------------------- */
+.precios-encabezado {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+/* Kicker / Badge de precios */
+.precios-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(var(--precios-cian-rgb), 0.14) 0%, rgba(var(--precios-rosa-rgb), 0.08) 100%);
+  border: 1px solid rgba(var(--precios-cian-rgb), 0.28);
+  color: #0284c7;
+  font-family: var(--font-secondary);
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  box-shadow: 0 2px 8px rgba(var(--precios-cian-rgb), 0.08);
+}
+
+.precios-kicker__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--precios-cian), var(--precios-rosa));
+  box-shadow: 0 0 8px rgba(var(--precios-cian-rgb), 0.6);
+}
+
+/* Título */
+.precios-titulo {
+  margin: 0;
+  font-family: var(--font-primary);
+  font-size: clamp(2rem, 5vw, 2.85rem);
+  line-height: 1.12;
+  font-weight: 800;
+  color: var(--precios-text-title);
+  letter-spacing: -0.02em;
+}
+
+.precios-titulo__acento {
+  background: linear-gradient(120deg, var(--precios-text-title) 20%, var(--precios-rosa) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+/* Descripción */
+.precios-descripcion {
+  margin: 0;
+  max-width: 680px;
+  font-family: var(--font-secondary);
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--precios-text-body);
+}
+
+/* --------------------------------------------------------------------------
+   Tarjeta principal: "Precios por confirmar"
+   -------------------------------------------------------------------------- */
+.precios-card-status {
+  position: relative;
+  background: var(--precios-card-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: var(--precios-radius-lg);
+  border: 1px solid rgba(var(--precios-cian-rgb), 0.2);
+  padding: 32px 28px;
+  box-shadow: var(--precios-shadow-md);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  transition: transform var(--precios-transition), box-shadow var(--precios-transition), border-color var(--precios-transition);
+}
+
+.precios-card-status:hover {
+  box-shadow: var(--precios-shadow-hover);
+  border-color: rgba(var(--precios-cian-rgb), 0.35);
+}
+
+/* Línea superior con gradiente de marca */
+.precios-card-status__linea {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--precios-cian) 0%, var(--precios-rosa) 100%);
+}
+
+/* Detalle gráfico decorativo de fondo: cuadrícula y silueta de papelería */
+.precios-card-status__decoracion {
+  position: absolute;
+  top: -24px;
+  right: -24px;
+  width: 170px;
+  height: 170px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(var(--precios-cian-rgb), 0.12) 0%, rgba(var(--precios-rosa-rgb), 0.05) 60%, transparent 80%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.precios-card-status__header {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+/* Icono principal con destello de marca */
+.precios-card-status__icono-box {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(var(--precios-cian-rgb), 0.16) 0%, rgba(var(--precios-rosa-rgb), 0.12) 100%);
+  border: 1px solid rgba(var(--precios-cian-rgb), 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0284c7;
+  box-shadow: 0 4px 14px rgba(var(--precios-cian-rgb), 0.12);
+}
+
+.precios-card-status__textos {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.precios-card-status__tag {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-secondary);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #059669;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  padding: 3px 10px;
+  border-radius: 999px;
+  letter-spacing: 0.02em;
+}
+
+.precios-card-status__tag-pulse {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #10b981;
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+}
+
+.precios-card-status h2 {
+  margin: 0;
+  font-family: var(--font-primary);
+  font-size: clamp(1.3rem, 3.2vw, 1.6rem);
+  font-weight: 800;
+  color: var(--precios-text-title);
+  letter-spacing: -0.01em;
+}
+
+.precios-card-status p {
+  margin: 0;
+  font-family: var(--font-secondary);
+  font-size: 0.98rem;
+  line-height: 1.55;
+  color: var(--precios-text-body);
+}
+
+/* Lista de ventajas / garantías de atención rápida */
+.precios-card-status__ventajas {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.precios-ventaja-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(248, 250, 252, 0.9);
+  border: 1px solid rgba(15, 34, 58, 0.08);
+  font-family: var(--font-secondary);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--precios-text-body);
+}
+
+.precios-ventaja-chip svg {
+  color: var(--precios-cian);
+  flex-shrink: 0;
+}
+
+/* Botón comercial de WhatsApp */
+.precios-btn-whatsapp {
+  position: relative;
+  z-index: 1;
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 50px;
+  padding: 12px 26px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #25D366 0%, #1da851 100%);
+  color: #ffffff;
+  font-family: var(--font-primary);
+  font-size: 1rem;
+  font-weight: 700;
+  text-decoration: none;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 10px 24px -4px rgba(37, 211, 102, 0.38), 0 2px 6px rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  transition: transform var(--precios-transition), box-shadow var(--precios-transition), filter var(--precios-transition);
+}
+
+.precios-btn-whatsapp:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.04);
+  box-shadow: 0 14px 28px -4px rgba(37, 211, 102, 0.48), 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.precios-btn-whatsapp:active {
+  transform: scale(0.98);
+}
+
+.precios-btn-whatsapp svg {
+  transition: transform var(--precios-transition);
+}
+
+.precios-btn-whatsapp:hover svg {
+  transform: scale(1.1);
+}
+
+/* --------------------------------------------------------------------------
+   Sección: "Otros servicios"
+   -------------------------------------------------------------------------- */
+.precios-otros {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.precios-otros__header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.precios-otros__header-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.precios-sparkle-icon {
+  color: var(--precios-rosa);
+  flex-shrink: 0;
+}
+
+.precios-otros__header-top h2 {
+  margin: 0;
+  font-family: var(--font-primary);
+  font-size: clamp(1.35rem, 3.5vw, 1.7rem);
+  font-weight: 800;
+  color: var(--precios-text-title);
+  letter-spacing: -0.01em;
+}
+
+.precios-otros__header p {
+  margin: 0;
+  font-family: var(--font-secondary);
+  font-size: 0.95rem;
+  color: var(--precios-text-muted);
+}
+
+/* Grilla de servicios: 3 columnas en escritorio, 2 en tablet, 1 en móvil */
+.precios-servicios-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Tarjeta individual de servicio */
+.precios-servicio-card {
+  --card-acento: var(--precios-cian);
+  --card-acento-rgb: var(--precios-cian-rgb);
+  position: relative;
+  background: var(--precios-card-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: var(--precios-radius-md);
+  border: 1px solid var(--precios-card-border);
+  padding: 22px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: var(--precios-shadow-sm);
+  overflow: hidden;
+  transition: transform var(--precios-transition), box-shadow var(--precios-transition), border-color var(--precios-transition);
+}
+
+/* Variante Rosa para alternancia rítmica */
+.precios-servicio-card--rosa {
+  --card-acento: var(--precios-rosa);
+  --card-acento-rgb: var(--precios-rosa-rgb);
+}
+
+/* Línea de acento interactiva superior */
+.precios-servicio-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--card-acento), transparent);
+  opacity: 0.7;
+  transform: scaleX(0.3);
+  transform-origin: left;
+  transition: transform var(--precios-transition), opacity var(--precios-transition);
+}
+
+.precios-servicio-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(var(--card-acento-rgb), 0.35);
+  box-shadow: 0 16px 36px -8px rgba(var(--card-acento-rgb), 0.16), 0 4px 12px rgba(15, 34, 58, 0.04);
+}
+
+.precios-servicio-card:hover::before {
+  transform: scaleX(1);
+  opacity: 1;
+}
+
+/* Cabecera de la tarjeta: Icono + Tag de categoría */
+.precios-servicio-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.precios-servicio-card__icon-box {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: rgba(var(--card-acento-rgb), 0.1);
+  border: 1px solid rgba(var(--card-acento-rgb), 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--card-acento);
+  transition: transform var(--precios-transition), background-color var(--precios-transition);
+}
+
+.precios-servicio-card:hover .precios-servicio-card__icon-box {
+  transform: scale(1.08);
+  background: rgba(var(--card-acento-rgb), 0.15);
+}
+
+.precios-servicio-card__tag {
+  font-family: var(--font-secondary);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--card-acento);
+  background: rgba(var(--card-acento-rgb), 0.08);
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+
+/* Cuerpo de la tarjeta */
+.precios-servicio-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.precios-servicio-card__titulo {
+  margin: 0;
+  font-family: var(--font-primary);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--precios-text-title);
+  letter-spacing: -0.01em;
+}
+
+.precios-servicio-card__descripcion {
+  margin: 0;
+  font-family: var(--font-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--precios-text-body);
+}
+
+/* Acción de cotización: botón interactivo con microinteracción */
+.precios-servicio-card__link {
+  margin-top: 4px;
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 6px 14px 6px 14px;
+  border-radius: 999px;
+  background: rgba(var(--card-acento-rgb), 0.08);
+  border: 1px solid rgba(var(--card-acento-rgb), 0.18);
+  color: var(--card-acento);
+  font-family: var(--font-primary);
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color var(--precios-transition), border-color var(--precios-transition), color var(--precios-transition), transform var(--precios-transition);
+}
+
+.precios-servicio-card__link svg {
+  transition: transform var(--precios-transition);
+}
+
+.precios-servicio-card__link:hover {
+  background: var(--card-acento);
+  color: #ffffff;
+  border-color: var(--card-acento);
+  transform: translateX(2px);
+}
+
+.precios-servicio-card__link:hover svg {
+  transform: translateX(3px);
+}
+
+.precios-servicio-card__link:active {
+  transform: scale(0.96);
+}
+
+/* --------------------------------------------------------------------------
+   Llamado a la acción inferior: Imprimir en línea
+   -------------------------------------------------------------------------- */
+.precios-cta-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+  padding-top: 8px;
+}
+
+.precios-btn-imprimir {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 12px 32px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--precios-rosa) 0%, #db0e73 100%);
+  color: #ffffff;
+  font-family: var(--font-primary);
+  font-size: 1.05rem;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 10px 24px -4px rgba(var(--precios-rosa-rgb), 0.38), 0 2px 6px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: transform var(--precios-transition), box-shadow var(--precios-transition), filter var(--precios-transition);
+}
+
+.precios-btn-imprimir:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.06);
+  box-shadow: 0 16px 32px -6px rgba(var(--precios-rosa-rgb), 0.48), 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.precios-btn-imprimir:active {
+  transform: scale(0.98);
+}
+
+/* --------------------------------------------------------------------------
+   Tarifas publicadas y Calculadora (cuando hay tarifas configuradas)
+   -------------------------------------------------------------------------- */
+.precios-page .imp-paso {
+  background: var(--precios-card-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: var(--precios-radius-lg);
+  border: 1px solid rgba(var(--precios-cian-rgb), 0.2);
+  box-shadow: var(--precios-shadow-md);
+  padding: 26px 24px;
+}
+
+.precios-tarifas-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.precios-tarifas-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.precios-tarifa-card {
+  position: relative;
+  background: var(--precios-card-bg);
+  backdrop-filter: blur(12px);
+  border-radius: var(--precios-radius-md);
+  border: 1px solid var(--precios-card-border);
+  padding: 24px;
+  box-shadow: var(--precios-shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: hidden;
+  transition: transform var(--precios-transition), box-shadow var(--precios-transition);
+}
+
+.precios-tarifa-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--precios-shadow-md);
+}
+
+.precios-tarifa-card--color {
+  border-color: rgba(var(--precios-rosa-rgb), 0.25);
+}
+
+.precios-tarifa-card__muestra {
+  width: 42px;
+  height: 24px;
+  border-radius: 8px;
+  margin-bottom: 4px;
+}
+
+.precios-tarifa-card__muestra--bn {
+  background: linear-gradient(90deg, #1f2937 0% 50%, #9ca3af 50% 100%);
+}
+
+.precios-tarifa-card__muestra--color {
+  background: linear-gradient(90deg, var(--precios-cian) 0%, var(--precios-rosa) 100%);
+}
+
+.precios-tarifa-card h3 {
+  margin: 0;
+  font-family: var(--font-primary);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--precios-text-muted);
+}
+
+.precios-tarifa-card__precio {
+  margin: 0;
+  font-family: var(--font-primary);
+  font-size: clamp(1.9rem, 4.5vw, 2.5rem);
+  font-weight: 800;
+  color: var(--precios-text-title);
+  line-height: 1.05;
+}
+
+.precios-tarifa-card small {
+  font-family: var(--font-secondary);
+  color: var(--precios-text-muted);
+  font-size: 0.88rem;
+}
+
+.precios-detalles-lista {
+  list-style: none;
+  padding: 18px 22px;
+  border-radius: var(--precios-radius-md);
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px dashed rgba(var(--precios-cian-rgb), 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-family: var(--font-secondary);
+  font-size: 0.95rem;
+  color: var(--precios-text-body);
+}
+
+.precios-detalles-lista li {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.precios-detalles-lista li::before {
+  content: '✓';
+  color: var(--precios-rosa);
+  font-weight: 800;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Breakpoints
+   -------------------------------------------------------------------------- */
+@media (max-width: 860px) {
+  .precios-servicios-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .precios-page {
+    padding: 20px 14px 60px;
+  }
+
+  .precios-contenedor {
+    gap: 18px;
+  }
+
+  .precios-card-status {
+    padding: 22px 18px;
+  }
+
+  .precios-card-status__header {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .precios-card-status__icono-box {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+  }
+
+  .precios-btn-whatsapp {
+    width: 100%;
+  }
+
+  .precios-servicios-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .precios-tarifas-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .precios-btn-imprimir {
+    width: 100%;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Modo movimiento reducido (accesibilidad)
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .precios-volver,
+  .precios-volver svg,
+  .precios-card-status,
+  .precios-btn-whatsapp,
+  .precios-btn-whatsapp svg,
+  .precios-servicio-card,
+  .precios-servicio-card::before,
+  .precios-servicio-card__icon-box,
+  .precios-servicio-card__link,
+  .precios-servicio-card__link svg,
+  .precios-btn-imprimir,
+  .precios-ambient__glow {
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+  }
+}

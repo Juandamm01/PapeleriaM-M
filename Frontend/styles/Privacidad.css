@@ -1,8 +1,7 @@
-/* La landing deja html/body/#root con overflow: hidden; esta página maneja su propio scroll */
+/* El documento hace el scroll (sin contenedores anidados) */
 .privacidad-page {
-  height: 100vh;
-  overflow-y: auto;
-  overflow-x: hidden;
+  min-height: 100vh;
+  min-height: 100svh;
   padding: 32px 16px 48px;
   background-color: #f9fbfe;
   background-image:
