@@ -1,17 +1,23 @@
-import React, { type ReactNode, useEffect, useRef } from 'react';
+import React, { type ReactNode } from 'react';
 import '../../../styles/LogoLoop.css';
 
 interface LogoLoopProps {
   children: ReactNode[];
-  speed?: number; // duration in seconds
+  speed?: number; // duración de una vuelta en segundos
   direction?: 'left' | 'right';
   gap?: number;
   scaleOnHover?: boolean;
   fadeOut?: boolean;
   fadeOutColor?: string;
   className?: string;
+  ariaLabel?: string;
 }
 
+/**
+ * Marquesina infinita. No es un contenedor de scroll: el desborde horizontal
+ * se recorta con overflow-x: clip (sin barras ni scrollLeft que reiniciar) y
+ * los bordes se desvanecen con una máscara para que el corte sea intencional.
+ */
 export const LogoLoop: React.FC<LogoLoopProps> = ({
   children,
   speed = 20,
@@ -20,37 +26,14 @@ export const LogoLoop: React.FC<LogoLoopProps> = ({
   scaleOnHover = true,
   fadeOut = true,
   fadeOutColor = 'var(--bg-color)',
-  className = ''
+  className = '',
+  ariaLabel,
 }) => {
-  const loopRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const loop = loopRef.current;
-    if (!loop) return;
-
-    const resetScroll = () => {
-      loop.scrollLeft = 0;
-    };
-
-    resetScroll();
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) resetScroll();
-    });
-
-    observer.observe(loop);
-    const verticalScroller = loop.closest('.scroll-container');
-    verticalScroller?.addEventListener('scroll', resetScroll, { passive: true });
-
-    return () => {
-      observer.disconnect();
-      verticalScroller?.removeEventListener('scroll', resetScroll);
-    };
-  }, []);
-
   return (
-    <div 
-      ref={loopRef}
+    <div
       className={`logoloop ${scaleOnHover ? 'logoloop--scale-hover' : ''} ${fadeOut ? 'logoloop--fade' : ''} ${className}`}
+      role={ariaLabel ? 'region' : undefined}
+      aria-label={ariaLabel}
       style={{
         '--logoloop-gap': `${gap}px`,
         '--logoloop-fadeColor': fadeOutColor,
@@ -68,7 +51,7 @@ export const LogoLoop: React.FC<LogoLoopProps> = ({
             </div>
           ))}
         </div>
-        <div className="logoloop__list" aria-hidden="true">
+        <div className="logoloop__list" aria-hidden="true" inert>
           {children.map((child, i) => (
             <div key={`loop-copy-${i}`} className="logoloop__item">
               <div className="logoloop__node">{child}</div>

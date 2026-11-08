@@ -10,9 +10,15 @@ const Nosotros: React.FC = () => {
         {/* Left Column - Image with Parallax Hover */}
         <div className="nosotros-image-column">
           <div className="image-wrapper-pro">
-            <img 
-              src="/InternetM&M.png" 
-              alt="Internet y Copias M&M" 
+            <img
+              src="/nosotros-560.webp"
+              srcSet="/nosotros-320.webp 320w, /nosotros-560.webp 560w"
+              sizes="(max-width: 600px) 140px, (max-width: 968px) 200px, 244px"
+              width={560}
+              height={840}
+              loading="lazy"
+              decoding="async"
+              alt="Fachada de Internet y Copias M&M"
               className="nosotros-image-pro"
             />
           </div>

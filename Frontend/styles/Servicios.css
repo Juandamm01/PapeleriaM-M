@@ -1,18 +1,34 @@
+/*
+ * Causa de la barra de scroll temporal (corregida):
+ * .servicios-container tenía `overflow-x: hidden`. Por especificación, si un eje
+ * es hidden el otro (`visible`) pasa a computarse como `auto`, así que el
+ * contenedor se volvía un contenedor de scroll vertical. ScrollReveal arranca la
+ * marquesina con translateY(100px) + scale(0.8) y un resorte de ~2 s: mientras
+ * la tarjeta "subía", su caja transformada sobresalía por debajo del contenedor
+ * y aparecía una barra vertical que desaparecía al terminar la animación.
+ * Ahora ningún elemento de la sección es contenedor de scroll: se usa
+ * `overflow: clip` (recorta sin crear scroll) solo donde hace falta.
+ */
 .servicios-section {
-  padding: 80px 0;
-  min-height: 100vh;
+  padding: 112px 0 72px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  overflow: hidden; /* Prevenir la barra de desplazamiento horizontal del loop */
+  overflow: hidden;
+}
+
+@supports (overflow: clip) {
+  .servicios-section {
+    overflow: clip;
+  }
 }
 
 .servicios-container {
   width: 100%;
-  max-width: 100vw;
+  max-width: 1440px;
   min-width: 0;
-  overflow-x: hidden;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -20,119 +36,107 @@
 
 .sticky-title {
   text-align: center;
-  font-size: 3.5rem;
+  font-size: clamp(2.2rem, 5vw, 3.5rem);
+  line-height: 1.05;
   color: var(--secondary);
   font-family: var(--font-primary);
   font-weight: 800;
-  margin-bottom: 40px;
+  margin-bottom: 12px;
+  padding: 0 20px;
   z-index: 10;
-  /* Añadir sombra de texto o filtro de fondo para que destaque sobre los elementos móviles en caso de superposición */
   text-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
-.servicios-subtitle {
-  text-align: center;
-  font-family: var(--font-secondary);
-  color: var(--text-secondary);
-  font-size: 1.1rem;
-  margin-bottom: 60px;
-  margin-bottom: 40px;
-  padding: 0 20px;
+.servicios-container > div {
+  width: 100%;
+  min-width: 0;
 }
 
 .servicios-loop-container {
-  flex: 0 0 100%;
   width: 100%;
-  max-width: 100%;
   min-width: 0;
-  align-self: stretch;
   position: relative;
 }
 
-.servicios-carousel-shell {
-  position: relative;
-  width: 100%;
-  min-width: 0;
+/* Marquesina (escritorio/tablet): margen lateral = gutter de la página */
+.servicios-carousel {
+  padding-left: 0;
+  padding-right: 0;
 }
 
-.servicios-carousel-fade {
-  position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 10;
-  display: flex;
-  width: 64px;
-  height: 100%;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-  background: linear-gradient(to left, rgba(249, 251, 254, 0.98), rgba(249, 251, 254, 0));
-  color: var(--text-secondary);
-}
-
-.servicios-container > div {
-  flex: 0 0 100%;
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-}
-
-.mt-8 {
-  margin-top: 2rem;
-}
-
-/* Estilos actualizados de la tarjeta para el loop */
+/* ---------- Tarjeta ---------- */
 .servicio-card {
-  background: white;
+  --acento: var(--primary);
+  --acento-suave: rgba(0, 210, 255, 0.12);
+  position: relative;
+  background: #ffffff;
   border-radius: 24px;
-  padding: 40px 30px;
-  width: 320px; /* Ancho fijo (px/vw, nunca %): el ítem del loop se dimensiona según la tarjeta */
-  flex: 0 0 auto;
-  min-height: 300px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+  padding: 34px 28px 30px;
+  width: 300px;
+  min-height: 292px;
+  height: 100%;
+  box-shadow: 0 10px 30px rgba(20, 40, 80, 0.05);
   border: 1px solid rgba(0, 0, 0, 0.05);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  white-space: normal; /* Sobrescribir el espacio en blanco del elemento del loop para permitir saltos de línea */
+  white-space: normal;
   text-align: left;
+  overflow: hidden;
+}
+
+.servicio-card--rosa {
+  --acento: var(--secondary);
+  --acento-suave: rgba(255, 0, 127, 0.1);
+}
+
+/* Línea de acento que crece al pasar el cursor (sin afectar el layout) */
+.servicio-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--acento), transparent);
+  transform: scaleX(0.25);
+  transform-origin: left;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .servicio-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 20px 40px rgba(0, 210, 255, 0.1);
-  border-color: rgba(0, 210, 255, 0.3);
+  transform: translateY(-8px);
+  box-shadow: 0 22px 44px var(--acento-suave);
+  border-color: color-mix(in srgb, var(--acento) 35%, transparent);
+}
+
+.servicio-card:hover::before {
+  transform: scaleX(1);
 }
 
 .servicio-icon {
-  background: var(--bg-color);
-  color: var(--text-primary);
-  margin-bottom: 24px;
+  background: var(--acento-suave);
+  color: var(--acento);
+  margin-bottom: 22px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 64px;
-  height: 64px;
+  width: 60px;
+  height: 60px;
   border-radius: 16px;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.servicio-card:hover .servicio-icon {
+  transform: rotate(-6deg) scale(1.06);
 }
 
 .servicio-title {
-  font-size: 1.5rem;
-  color: var(--primary);
+  font-size: 1.4rem;
+  line-height: 1.2;
+  color: var(--acento);
   font-family: var(--font-primary);
   font-weight: 700;
-  margin-bottom: 16px;
-}
-
-/* Colores alternos para el loop */
-.logoloop__item:nth-child(even) .servicio-title {
-  color: var(--secondary);
-}
-
-.logoloop__item:nth-child(even) .servicio-card:hover {
-  box-shadow: 0 20px 40px rgba(255, 0, 127, 0.1);
-  border-color: rgba(255, 0, 127, 0.3);
+  margin-bottom: 12px;
 }
 
 .servicio-description {
@@ -142,68 +146,156 @@
   line-height: 1.6;
 }
 
-@media (min-width: 769px) {
-  .servicios-section {
-    padding-top: 112px;
-    padding-bottom: 112px;
+/* ---------- Carrusel móvil ---------- */
+.servicios-carrusel-wrap {
+  width: 100%;
+}
+
+.servicios-carrusel {
+  --ancho-slide: min(calc(100vw - 72px), 330px);
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: calc((100% - var(--ancho-slide)) / 2);
+  padding: 18px calc((100% - var(--ancho-slide)) / 2) 26px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.servicios-carrusel::-webkit-scrollbar {
+  display: none;
+}
+
+.servicios-carrusel:focus-visible {
+  outline-offset: -3px;
+}
+
+.servicios-carrusel__slide {
+  flex: 0 0 var(--ancho-slide);
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+  display: flex;
+}
+
+.servicios-carrusel__slide .servicio-card {
+  width: 100%;
+}
+
+.servicios-dots {
+  display: flex;
+  justify-content: center;
+  gap: 2px;
+}
+
+.servicios-dot {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 999px;
+}
+
+.servicios-dot span {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.18);
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.servicios-dot.is-activa span {
+  width: 22px;
+  background: var(--secondary);
+}
+
+/* ---------- Llamados a la acción ---------- */
+.servicios-cta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 18px;
+  padding: 0 20px;
+}
+
+.servicios-cta__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 10px 22px;
+  border-radius: 999px;
+  font-family: var(--font-primary);
+  font-weight: 700;
+  font-size: 0.98rem;
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.85);
+  border: 1.5px solid rgba(0, 0, 0, 0.08);
+  text-decoration: none;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.servicios-cta__btn:hover {
+  transform: translateY(-2px);
+  border-color: rgba(0, 210, 255, 0.5);
+  box-shadow: 0 10px 22px rgba(0, 210, 255, 0.14);
+}
+
+.servicios-cta__btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.servicios-cta__btn--primario {
+  color: #ffffff;
+  background: var(--secondary);
+  border-color: var(--secondary);
+  box-shadow: 0 10px 24px rgba(255, 0, 127, 0.22);
+}
+
+.servicios-cta__btn--primario:hover {
+  border-color: var(--secondary);
+  box-shadow: 0 14px 28px rgba(255, 0, 127, 0.3);
+}
+
+.servicios-cta__btn--primario svg {
+  transition: transform 0.25s ease;
+}
+
+.servicios-cta__btn--primario:hover svg {
+  transform: translateX(3px);
+}
+
+@media (min-width: 768px) {
+  .servicios-container {
+    padding: 0 24px;
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .servicios-section {
-    padding: 80px 20px;
+    padding: 96px 0 56px;
   }
 
   .servicio-card {
-    width: min(82vw, 300px);
-    min-height: 280px;
-    padding: 30px 20px;
+    min-height: 270px;
+    padding: 28px 22px 24px;
   }
 
-  .servicios-carousel {
-    scroll-snap-type: x proximity;
-  }
-
-  .servicios-carousel-fade {
-    width: 48px;
-  }
-  .sticky-title {
-    font-size: clamp(2.3rem, 7vw, 2.8rem);
-    margin-bottom: 28px;
-  }
-
-  .servicios-subtitle {
-    font-size: 1rem;
-    margin-bottom: 40px;
-    padding: 0 10px;
+  .servicios-cta__btn {
+    flex: 1 1 100%;
+    max-width: 330px;
   }
 }
 
 @media (max-width: 430px) {
-  .servicios-section {
-    padding: 80px 16px;
-  }
-
-  .servicios-container {
-    gap: 0;
-  }
-
-  .sticky-title {
-    font-size: 2.2rem;
-    margin-bottom: 28px;
-  }
-
-  .servicios-subtitle {
-    font-size: 0.92rem;
-    margin-bottom: 30px;
-  }
-
-  .servicio-card {
-    width: min(82vw, 300px);
-    margin-bottom: 28px;
-    padding: 26px 18px;
-  }
-
   .servicio-icon {
     width: 52px;
     height: 52px;
@@ -211,12 +303,23 @@
   }
 
   .servicio-title {
-    font-size: 1.2rem;
-    margin-bottom: 12px;
+    font-size: 1.22rem;
   }
 
   .servicio-description {
-    font-size: 0.92rem;
+    font-size: 0.94rem;
     line-height: 1.5;
+  }
+}
+
+@media (max-height: 700px) and (min-width: 768px) {
+  .servicios-section {
+    padding-top: 96px;
+    padding-bottom: 40px;
+  }
+
+  .servicio-card {
+    min-height: 250px;
+    padding: 26px 24px;
   }
 }

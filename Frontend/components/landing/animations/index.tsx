@@ -1,7 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import { useSpring, animated } from '@react-spring/web';
-import gsap from 'gsap';
 
 // Animación con Framer Motion
 export const FadeIn: React.FC<{ children: React.ReactNode; delay?: number; direction?: 'up' | 'down' | 'left' | 'right' | 'none' }> = ({ children, delay = 0, direction = 'up' }) => {
@@ -26,50 +24,6 @@ export const FadeIn: React.FC<{ children: React.ReactNode; delay?: number; direc
       {children}
     </motion.div>
   );
-};
-
-// Animación con React Spring
-export const BouncyHover: React.FC<{ children: React.ReactNode; scale?: number }> = ({ children, scale = 1.05 }) => {
-  const [isHovered, setIsHovered] = useState(false);
-  
-  const springProps = useSpring({
-    transform: isHovered ? `scale(${scale})` : 'scale(1)',
-    config: { tension: 300, friction: 10 },
-  });
-
-  return (
-    <animated.div
-      style={{ display: 'inline-block', ...springProps }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      {children}
-    </animated.div>
-  );
-};
-
-// Animación con GSAP
-export const GsapReveal: React.FC<{ children: React.ReactNode; delay?: number }> = ({ children, delay = 0 }) => {
-  const elRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!elRef.current) return;
-    
-    gsap.fromTo(
-      elRef.current,
-      { opacity: 0, scale: 0.95, y: 30 },
-      {
-        opacity: 1,
-        scale: 1,
-        y: 0,
-        duration: 1,
-        delay,
-        ease: 'power3.out',
-      }
-    );
-  }, [delay]);
-
-  return <div ref={elRef} style={{ width: '100%' }}>{children}</div>;
 };
 
 // Animación de aparición al hacer scroll (Framer Motion - Estilo Premium)
@@ -200,7 +154,6 @@ export const SectionHighlight: React.FC<{
         position: sticky ? "sticky" : "relative",
         top: 0,
         width: "100%",
-        minHeight: "100vh",
         display: "flex",
         alignItems: align,
         justifyContent: "center",
@@ -212,7 +165,6 @@ export const SectionHighlight: React.FC<{
           ? "100% 100%, 100% 100%, 45px 45px, 45px 45px, 100% 100%" 
           : "auto",
         zIndex: zIndex,
-        willChange: "transform, opacity",
         boxShadow: sticky ? "0 -30px 60px rgba(0,0,0,0.08)" : "none",
         borderTop: sticky && zIndex > 10 ? "1px solid rgba(255, 255, 255, 0.9)" : "none",
       }}
@@ -256,5 +208,5 @@ export const FloatingParticles: React.FC = () => {
   );
 };
 
-export * from './LogoLoop';
+export { LogoLoop } from './LogoLoop';
 export { default as ShapeGrid } from './ShapeGrid';

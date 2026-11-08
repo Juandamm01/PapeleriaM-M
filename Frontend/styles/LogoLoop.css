@@ -5,41 +5,22 @@
   width: 100%;
   max-width: 100%;
   min-width: 0;
-  overflow-x: auto;
-  overflow-y: hidden;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  /* Recorte sin contenedor de scroll: no puede aparecer ninguna barra */
+  overflow: hidden;
   --logoloop-gap: 32px;
   --logoloop-fadeColorAuto: var(--bg-color, #ffffff);
 }
 
-.servicios-carousel {
-  gap: 24px;
-  min-width: 0;
-  padding-left: 24px;
-  padding-right: 24px;
-  scroll-snap-type: x mandatory;
-}
-
-.logoloop::-webkit-scrollbar {
-  display: none;
-}
-
-.logoloop--vertical {
-  height: 100%;
-  display: inline-block;
+@supports (overflow: clip) {
+  .logoloop {
+    overflow: visible;
+    overflow-x: clip;
+  }
 }
 
 .logoloop--scale-hover {
   padding-top: 20px;
-  padding-bottom: 20px;
-}
-
-@media (prefers-color-scheme: dark) {
-  .logoloop {
-    --logoloop-fadeColorAuto: #0b0b0b;
-  }
+  padding-bottom: 28px;
 }
 
 .logoloop__track {
@@ -48,71 +29,43 @@
   user-select: none;
   position: relative;
   z-index: 0;
+  will-change: transform;
 }
 
 .logoloop__list {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   gap: var(--logoloop-gap);
-  padding: 0;
+  /* el espacio entre copias debe ser igual al gap para que el bucle no "salte" */
+  padding-right: var(--logoloop-gap);
 }
 
 .logoloop__item {
   flex: 0 0 auto;
+  display: flex;
   line-height: 1;
 }
 
 .logoloop__node {
-  display: inline-flex;
-  align-items: center;
-  /* Ancho según su contenido: un % aquí sería circular porque el ítem es flex: 0 0 auto */
+  display: flex;
+  align-items: stretch;
   width: auto;
-  height: 100%;
 }
 
 .logoloop--scale-hover .logoloop__item {
   overflow: visible;
 }
 
-/* Pausar la animación al pasar el cursor */
-.logoloop:hover .logoloop__track {
+/* Pausar la animación al pasar el cursor o al enfocar una tarjeta con teclado */
+.logoloop:hover .logoloop__track,
+.logoloop:focus-within .logoloop__track {
   animation-play-state: paused;
 }
 
-.logoloop--fade::before,
-.logoloop--fade::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: clamp(50px, 15%, 200px);
-  pointer-events: none;
-  z-index: 10;
-}
-
-@media (min-width: 768px) {
-  .servicios-carousel {
-    padding-left: 64px;
-    padding-right: 64px;
-  }
-}
-
-.logoloop--fade::before {
-  left: 0;
-  background: linear-gradient(
-    to right,
-    var(--logoloop-fadeColor, var(--logoloop-fadeColorAuto)) 0%,
-    rgba(0, 0, 0, 0) 100%
-  );
-}
-
-.logoloop--fade::after {
-  right: 0;
-  background: linear-gradient(
-    to left,
-    var(--logoloop-fadeColor, var(--logoloop-fadeColorAuto)) 0%,
-    rgba(0, 0, 0, 0) 100%
-  );
+/* Bordes desvanecidos: el corte de la marquesina se ve intencional */
+.logoloop--fade {
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 clamp(40px, 9%, 160px), #000 calc(100% - clamp(40px, 9%, 160px)), transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, #000 clamp(40px, 9%, 160px), #000 calc(100% - clamp(40px, 9%, 160px)), transparent 100%);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -123,11 +76,11 @@
 }
 
 @keyframes loop-left {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(calc(-100% / var(--loop-copies, 2))); }
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(calc(-100% / var(--loop-copies, 2)), 0, 0); }
 }
 
 @keyframes loop-right {
-  0% { transform: translateX(calc(-100% / var(--loop-copies, 2))); }
-  100% { transform: translateX(0); }
+  0% { transform: translate3d(calc(-100% / var(--loop-copies, 2)), 0, 0); }
+  100% { transform: translate3d(0, 0, 0); }
 }

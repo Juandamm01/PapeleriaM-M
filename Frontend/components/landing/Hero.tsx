@@ -1,17 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { CloudUpload } from 'lucide-react';
-import { FadeIn, BouncyHover, SectionHighlight } from './animations';
-import { hasApi, whatsappLink } from '../../src/api';
+import { Link } from 'react-router-dom';
+import { FadeIn, SectionHighlight } from './animations';
 import '../../styles/Hero.css';
 
-type HeroProps = {
-  onUploadClick: () => void;
-};
-
-const WHATSAPP_PEDIDO_URL = whatsappLink('Hola, quiero imprimir un documento');
-
-const Hero: React.FC<HeroProps> = ({ onUploadClick }) => {
+const Hero: React.FC = () => {
   return (
     <SectionHighlight id="inicio" className="hero-section snap-section" zIndex={10} sticky={false}>
       <motion.div 
@@ -43,31 +37,22 @@ const Hero: React.FC<HeroProps> = ({ onUploadClick }) => {
 
         <FadeIn delay={0.4} direction="up">
           <div className="button-group">
-            <BouncyHover scale={1.05}>
-              {hasApi ? (
-                <button className="btn btn-primary" type="button" onClick={onUploadClick}>
-                  <CloudUpload size={20} />
-                  Subir Archivo
-                </button>
-              ) : (
-                <a
-                  className="btn btn-primary"
-                  href={WHATSAPP_PEDIDO_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <CloudUpload size={20} />
-                  Subir Archivo
-                </a>
-              )}
-            </BouncyHover>
-            
-            <BouncyHover scale={1.05}>
-              <button className="btn btn-secondary">
-                Ver Precios
-              </button>
-            </BouncyHover>
+            <Link className="btn btn-primary" to="/imprimir">
+              <CloudUpload size={20} aria-hidden="true" />
+              Subir Archivo
+            </Link>
+            <Link className="btn btn-secondary" to="/precios">
+              Ver Precios
+            </Link>
           </div>
+        </FadeIn>
+
+        <FadeIn delay={0.55} direction="up">
+          <ul className="hero-beneficios" aria-label="Beneficios">
+            <li>Sin filas</li>
+            <li>Paga con Nequi o en efectivo</li>
+            <li>Recoge a la hora que elijas</li>
+          </ul>
         </FadeIn>
       </motion.div>
     </SectionHighlight>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
+import { irASeccion } from '../src/hooks/useMediaQuery';
 import '../styles/Navbar.css';
 
 const Navbar: React.FC = () => {
@@ -11,29 +12,22 @@ const Navbar: React.FC = () => {
   const frameRequest = useRef<number | null>(null);
 
   const handleNavClick = (event: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    // Fuera de la landing (p. ej. /rastreo) el ancla no existe: se deja navegar a "/#id".
+    if (!document.getElementById(id)) return;
     event.preventDefault();
-    const scrollContainer = document.querySelector('.scroll-container') as HTMLElement | null;
-    const target = document.getElementById(id);
-    if (scrollContainer && target) {
-      const targetTop = target.getBoundingClientRect().top
-        - scrollContainer.getBoundingClientRect().top
-        + scrollContainer.scrollTop;
-      scrollContainer.scrollTo({ top: targetTop, behavior: 'smooth' });
-    } else {
-      target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
     setMobileMenuOpen(false);
+    // Tras cerrar el menú móvil se libera el bloqueo de scroll antes de desplazar.
+    window.requestAnimationFrame(() => irASeccion(id));
   };
 
   useEffect(() => {
-    const scrollContainer = document.querySelector('.scroll-container');
-    const scrollTarget = scrollContainer ?? window;
+    const scrollTarget = window;
 
     const controlNavbar = () => {
       if (frameRequest.current !== null) return;
 
       frameRequest.current = window.requestAnimationFrame(() => {
-        const currentScrollY = scrollContainer?.scrollTop ?? window.scrollY;
+        const currentScrollY = window.scrollY;
         setIsScrolled(currentScrollY > 20);
         if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
           setIsVisible(false);
@@ -57,11 +51,17 @@ const Navbar: React.FC = () => {
   useEffect(() => {
     if (typeof document === 'undefined') return;
 
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = mobileMenuOpen ? 'hidden' : previousOverflow;
+    if (!mobileMenuOpen) return;
+    const previousOverflow = document.documentElement.style.overflow;
+    document.documentElement.style.overflow = 'hidden';
+    const cerrarConEscape = (evento: KeyboardEvent) => {
+      if (evento.key === 'Escape') setMobileMenuOpen(false);
+    };
+    window.addEventListener('keydown', cerrarConEscape);
 
     return () => {
-      document.body.style.overflow = previousOverflow;
+      document.documentElement.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', cerrarConEscape);
     };
   }, [mobileMenuOpen]);
 
@@ -74,18 +74,24 @@ const Navbar: React.FC = () => {
         transition={{ duration: 0.3 }}
       >
         <div className="navbar-container">
-          <div className="navbar-logo">
-            <img src="/Logo.png" alt="Logo" />
-          </div>
+          <a className="navbar-logo" href="/#inicio" onClick={(event) => handleNavClick(event, 'inicio')} aria-label="Papelería M&M, ir al inicio">
+            <img src="/logo-nav.webp" alt="Papelería M&M" width={154} height={112} />
+          </a>
 
           <div className="navbar-links">
-            <a href="#inicio" onClick={(event) => handleNavClick(event, 'inicio')}>Inicio</a>
-            <a href="#nosotros" onClick={(event) => handleNavClick(event, 'nosotros')}>Nosotros</a>
-            <a href="#servicios" onClick={(event) => handleNavClick(event, 'servicios')}>Servicios</a>
-            <a href="#contacto" onClick={(event) => handleNavClick(event, 'contacto')}>Contacto</a>
+            <a href="/#inicio" onClick={(event) => handleNavClick(event, 'inicio')}>Inicio</a>
+            <a href="/#nosotros" onClick={(event) => handleNavClick(event, 'nosotros')}>Nosotros</a>
+            <a href="/#servicios" onClick={(event) => handleNavClick(event, 'servicios')}>Servicios</a>
+            <a href="/#contacto" onClick={(event) => handleNavClick(event, 'contacto')}>Contacto</a>
           </div>
 
-          <button className="mobile-toggle" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+          <button
+            className="mobile-toggle"
+            type="button"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={mobileMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
+            aria-expanded={mobileMenuOpen}
+          >
             {mobileMenuOpen ? <X /> : <Menu />}
           </button>
         </div>
@@ -100,7 +106,7 @@ const Navbar: React.FC = () => {
             >
               <div className="mobile-menu-header">
                 <div className="navbar-logo">
-                  <img src="/Logo.png" alt="Logo" />
+                  <img src="/logo-nav.webp" alt="Papelería M&M" width={154} height={112} />
                 </div>
                 <button
                   className="mobile-close"
@@ -113,10 +119,10 @@ const Navbar: React.FC = () => {
               </div>
 
               <nav className="mobile-menu-nav" aria-label="Navegación móvil">
-                <a href="#inicio" className="celeste-link" onClick={(event) => handleNavClick(event, 'inicio')}>Inicio</a>
-                <a href="#nosotros" className="rosa-link" onClick={(event) => handleNavClick(event, 'nosotros')}>Nosotros</a>
-                <a href="#servicios" className="celeste-link" onClick={(event) => handleNavClick(event, 'servicios')}>Servicios</a>
-                <a href="#contacto" className="rosa-link" onClick={(event) => handleNavClick(event, 'contacto')}>Contacto</a>
+                <a href="/#inicio" className="celeste-link" onClick={(event) => handleNavClick(event, 'inicio')}>Inicio</a>
+                <a href="/#nosotros" className="rosa-link" onClick={(event) => handleNavClick(event, 'nosotros')}>Nosotros</a>
+                <a href="/#servicios" className="celeste-link" onClick={(event) => handleNavClick(event, 'servicios')}>Servicios</a>
+                <a href="/#contacto" className="rosa-link" onClick={(event) => handleNavClick(event, 'contacto')}>Contacto</a>
               </nav>
             </motion.div>
           )}

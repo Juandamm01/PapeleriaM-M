@@ -1,34 +1,45 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import Navbar from '../common/Navbar';
 import Hero from '../components/landing/Hero';
-import PedidoModal from '../components/landing/PedidoModal';
+
 import Nosotros from '../components/landing/Nosotros';
 import Servicios from '../components/landing/Servicios';
 import Contactanos from '../components/landing/Contactanos';
 import Footer from './components/Footer';
 import { FloatingParticles, ShapeGrid } from '../components/landing/animations';
+import { usePrefiereMenosMovimiento } from './hooks/useMediaQuery';
 
 function LandingPage() {
-  const [isPedidoModalOpen, setIsPedidoModalOpen] = useState(false);
+
+  const menosMovimiento = usePrefiereMenosMovimiento();
+
+  // El documento es el contenedor de scroll; el snap solo aplica en la landing.
+  useEffect(() => {
+    const raiz = document.documentElement;
+    raiz.classList.add('landing-snap');
+
+    // Al llegar con un ancla (/#servicios), React aún no había pintado la sección
+    // cuando el navegador intentó saltar: se resuelve aquí, sin animación.
+    const id = decodeURIComponent(window.location.hash.slice(1));
+    let frame = 0;
+    if (id) {
+      frame = window.requestAnimationFrame(() => {
+        document.getElementById(id)?.scrollIntoView({ block: 'start' });
+      });
+    }
+
+    return () => {
+      raiz.classList.remove('landing-snap');
+      window.cancelAnimationFrame(frame);
+    };
+  }, []);
 
   return (
     <>
       <Navbar />
-      <div
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100vh',
-          zIndex: -1,
-          background:
-            'radial-gradient(circle at 15% 15%, rgba(0, 210, 255, 0.06) 0%, transparent 40%), radial-gradient(circle at 85% 85%, rgba(255, 0, 127, 0.06) 0%, transparent 40%), linear-gradient(135deg, #ffffff 0%, #f9fbfe 100%)',
-          overflow: 'hidden',
-        }}
-      >
+      <div className="landing-fondo" aria-hidden="true">
         <ShapeGrid
-          speed={0.8}
+          speed={menosMovimiento ? 0 : 0.8}
           squareSize={45}
           direction="diagonal"
           borderColor="rgba(0, 210, 255, 0.25)"
@@ -37,18 +48,14 @@ function LandingPage() {
           hoverTrailAmount={6}
         />
       </div>
-      <FloatingParticles />
-      <div className="scroll-container">
-        <Hero onUploadClick={() => setIsPedidoModalOpen(true)} />
+      {!menosMovimiento && <FloatingParticles />}
+      <main>
+        <Hero />
         <Nosotros />
         <Servicios />
         <Contactanos />
-        <Footer />
-      </div>
-      <PedidoModal
-        isOpen={isPedidoModalOpen}
-        onClose={() => setIsPedidoModalOpen(false)}
-      />
+      </main>
+      <Footer />
     </>
   );
 }
